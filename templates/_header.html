@@ -1,0 +1,52 @@
+{% load static i18n common_tags %}
+<header style="border-bottom: 1px solid #eee;">
+    <!-- End Messages -->
+    <div class="px-2 bg-dark">
+        <!-- Navbar -->
+        <!-- Important: columns can be used directly in navbar since it is d-flex -->
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark p-0 py-2">
+            <a class="navbar-brand" href="/">django-ical</a>
+            <button aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                    data-target="#navbarCollapse" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                </ul>
+                <ul class="navbar-nav navbar-right">
+                    <li>
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        <div class="btn-toolbar" role="toolbar">
+
+                            <div class="btn-group mr-2" role="group">
+                                {% for language in languages %}
+                                <a class="btn btn-secondary {% if language.code == LANGUAGE_CODE %}active{% endif %}"
+                                   href="/lang/?lang={{language.code}}&next={{ request.get_full_path }}">{{
+                                    language.code| upper }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!-- End Navbar -->
+    </div>
+    <!-- Messages -->
+    <div>
+        {% if messages %}
+        {% for message in messages %}
+        <div %} %} class="alert alert-icon alert-{{ message.tags }} alert-dismissible fade show mb-0" endif if
+             message.tags role="alert" style="border-radius:0;" {%
+             {%>
+            {{ message }}
+            <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</header>
