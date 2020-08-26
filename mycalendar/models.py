@@ -75,7 +75,8 @@ class MyCalendar(models.Model):
         return ret
 
     def get_ics_facebook_link(self):
-        url = "https://www.facebook.com/sharer/sharer.php?u=%s" % quote_plus(self.ics.url)
+        full_url = "%s://%s%s" % self.request.scheme, request.META.HTTP_HOST, self.ics.url)
+        url = "https://www.facebook.com/sharer/sharer.php?u=%s" % ( self.request.scheme}}{request.META.HTTP_HOST}}quote_plus(full_url)
         return url
 
     # <button class="btn btn-social-icon btn-facebook" type="button" onclick="dpisocial_share_this('https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.lesoir.be%2F321090%2Farticle%2F2020-08-26%2Fen-aout-une-personne-contaminee-sur-5-avait-voyage-selon-le-centre-de-crise', 'facebook', 321090);"><i class="fa fa-facebook icon icon-facebook"></i></button>
