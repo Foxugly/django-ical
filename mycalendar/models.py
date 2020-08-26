@@ -1,13 +1,14 @@
 import hashlib
 from datetime import datetime, timedelta
 from urllib.parse import quote_plus
-
+from django.conf import settings
 import pytz
 #from django.core.files import File, ContentFile
 from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.translation import gettext as _
 from icalendar import Calendar, Event, vText
+#from django.contrib.sites.models import get_current_site
 
 
 class MyCalendar(models.Model):
@@ -75,7 +76,7 @@ class MyCalendar(models.Model):
         return ret
 
     def get_ics_full_url(self):
-        full_url = "%s://%s%s" % self.request.scheme, self.request.META.HTTP_HOST, self.ics.url)
+        full_url = "http://%s%s" % ( settings.WEBSITE, self.ics.url)
         print(full_url)
         return full_url
     
