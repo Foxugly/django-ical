@@ -75,7 +75,7 @@ class MyCalendar(models.Model):
         return ret
 
     def get_ics_facebook_link(self):
-        full_url = "%s://%s%s" % self.request.scheme, request.META.HTTP_HOST, self.ics.url)
+        full_url = "%s://%s%s" % self.request.scheme, self.request.META.HTTP_HOST, self.ics.url)
         url = "https://www.facebook.com/sharer/sharer.php?u=%s" % ( self.request.scheme}}{request.META.HTTP_HOST}}quote_plus(full_url)
         return url
 
