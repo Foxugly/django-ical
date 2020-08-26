@@ -23,8 +23,7 @@
                             <div class="btn-group mr-2" role="group">
                                 {% for language in languages %}
                                 <a class="btn btn-secondary {% if language.code == LANGUAGE_CODE %}active{% endif %}"
-                                   href="/lang/?lang={{language.code}}&next={{ request.get_full_path }}">{{
-                                    language.code| upper }}</a>
+                                   href="/lang/?lang={{language.code}}&next={{ request.get_full_path }}">{{ language.code | upper }}</a>
                                 {% endfor %}
                             </div>
                         </div>
