@@ -77,7 +77,6 @@ class MyCalendar(models.Model):
 
     def get_ics_full_url(self):
         full_url = "http://%s%s" % ( settings.WEBSITE, self.ics.url)
-        print(full_url)
         return full_url
     
     def get_ics_facebook_link(self):
