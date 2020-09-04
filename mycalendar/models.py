@@ -28,7 +28,7 @@ class MyCalendar(models.Model):
             cal.add('prodid', '-// %s //' % (calname))
             cal.add('version', '2.0')
             cal.add('X-WR-CALNAME', '%s' % calname)
-            fichier = open(self.document.path, 'r')
+            fichier = open(self.document.path, 'r', encoding='latin-1' )
             for line in fichier.readlines():
                 vec = line.split(';')
                 if len(vec) >= 3:
