@@ -54,7 +54,7 @@ class MyCalendar(models.Model):
                     date_start = datetime(int(year), int(month), int(day), int(hour), int(minute), 0,
                                           tzinfo=pytz.timezone('Europe/Brussels'))
                     event.add('dtstart', date_start)
-                    event.add('dtend', date_start + timedelta(hours=2))
+                    event.add('dtend', date_start + timedelta(hours=1, minutes=30))
                     event.add('dtstamp', datetime.now())
                     if len(vec) > 4:
                         adr = vec[4][:-1]
