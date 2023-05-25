@@ -2,14 +2,37 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.shortcuts import render
-from django.urls import path
+from django.shortcuts import render, HttpResponseRedirect
+from django.urls import path, reverse
+from django.utils import translation
+from django.utils.translation import check_for_language, get_language
+
 from mycalendar.forms import MyCalendarForm
 from mycalendar.models import MyCalendar
-from decorator import check_lang
 
 
-@check_lang
+def set_lang(request):
+    response = None
+    if 'lang' in request.GET and check_for_language(request.GET.get('lang')):
+        user_language = request.GET.get('lang')
+        translation.activate(user_language)
+        if 'next' in request.GET:
+            response = HttpResponseRedirect(request.GET.get('next'))
+        else:
+            response = HttpResponseRedirect(reverse('home'))
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME,
+            user_language,
+            max_age=settings.LANGUAGE_COOKIE_AGE,
+            path=settings.LANGUAGE_COOKIE_PATH,
+            domain=settings.LANGUAGE_COOKIE_DOMAIN,
+            secure=settings.LANGUAGE_COOKIE_SECURE,
+            httponly=settings.LANGUAGE_COOKIE_HTTPONLY,
+            samesite=settings.LANGUAGE_COOKIE_SAMESITE,
+        )
+    return response
+
+
 def home(request):
     c = {}
     if request.method == 'POST':
@@ -28,7 +51,8 @@ def home(request):
 urlpatterns = [
     path('', home, name='home'),
     path('admin/', admin.site.urls),
+    path('lang/', set_lang, name='lang'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
