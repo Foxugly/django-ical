@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 from icalendar import Calendar, Event, vText
 
 
-EVENT_DURATION = timedelta(hours=1, minutes=30)
+DEFAULT_EVENT_DURATION = timedelta(hours=1, minutes=30)
 
 
 @dataclass(frozen=True)
@@ -19,9 +19,10 @@ class ParsedEvent:
     start: datetime
     location: Optional[str]
     uid: str
+    duration: timedelta = DEFAULT_EVENT_DURATION
 
     def end(self) -> datetime:
-        return self.start + EVENT_DURATION
+        return self.start + self.duration
 
 
 def _parse_date(token: str) -> tuple[int, int, int]:
@@ -42,7 +43,7 @@ def _parse_time(token: str) -> tuple[int, int]:
     return int(hour), int(minute)
 
 
-def parse_row(row: str, *, tz: ZoneInfo) -> Optional[ParsedEvent]:
+def parse_row(row: str, *, tz: ZoneInfo, event_duration: timedelta = DEFAULT_EVENT_DURATION) -> Optional[ParsedEvent]:
     fields = [f.strip() for f in row.rstrip("\r\n").split(";")]
     if len(fields) < 3:
         return None
@@ -60,10 +61,10 @@ def parse_row(row: str, *, tz: ZoneInfo) -> Optional[ParsedEvent]:
         location = fields[4]
 
     uid = hashlib.sha224(f"{fields[0]}{summary}".encode("utf-8")).hexdigest()
-    return ParsedEvent(summary=summary, start=start, location=location, uid=uid)
+    return ParsedEvent(summary=summary, start=start, location=location, uid=uid, duration=event_duration)
 
 
-def build_calendar(csv_text: str, *, name: str, tz: ZoneInfo) -> bytes:
+def build_calendar(csv_text: str, *, name: str, tz: ZoneInfo, event_duration: timedelta = DEFAULT_EVENT_DURATION) -> bytes:
     safe_name = name.splitlines()[0].strip() if name.strip() else ""
     cal = Calendar()
     cal.add("prodid", f"-// {safe_name} //")
@@ -74,7 +75,7 @@ def build_calendar(csv_text: str, *, name: str, tz: ZoneInfo) -> bytes:
     for row in csv_text.splitlines():
         if not row.strip():
             continue
-        parsed = parse_row(row, tz=tz)
+        parsed = parse_row(row, tz=tz, event_duration=event_duration)
         if parsed is None:
             continue
         event = Event()

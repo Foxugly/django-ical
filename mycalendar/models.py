@@ -1,4 +1,5 @@
 import logging
+from datetime import timedelta
 from urllib.parse import quote_plus
 from zoneinfo import ZoneInfo
 
@@ -12,7 +13,6 @@ from mycalendar.validators import validate_csv_upload
 
 
 logger = logging.getLogger(__name__)
-TZ = ZoneInfo("Europe/Brussels")
 
 
 class MyCalendar(models.Model):
@@ -25,10 +25,12 @@ class MyCalendar(models.Model):
         return self.name
 
     def get_ics(self) -> bool:
+        tz = ZoneInfo(settings.SITE_TIMEZONE)
+        duration = timedelta(minutes=settings.EVENT_DURATION_MINUTES)
         try:
             with self.document.open("rb") as fh:
                 csv_text = fh.read().decode("utf-8", errors="replace")
-            ics_bytes = build_calendar(csv_text, name=self.name, tz=TZ)
+            ics_bytes = build_calendar(csv_text, name=self.name, tz=tz, event_duration=duration)
         except Exception:
             logger.exception("failed to build ICS for MyCalendar id=%s", self.pk)
             return False

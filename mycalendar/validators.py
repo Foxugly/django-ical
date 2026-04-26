@@ -1,7 +1,7 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
 
-MAX_UPLOAD_BYTES = 1024 * 1024  # 1 MiB
 ALLOWED_EXTENSIONS = {".csv", ".txt"}
 ALLOWED_CONTENT_TYPES = {"text/csv", "text/plain", "application/csv", "application/vnd.ms-excel"}
 
@@ -11,8 +11,9 @@ def validate_csv_upload(uploaded_file) -> None:
     if not any(name.endswith(ext) for ext in ALLOWED_EXTENSIONS):
         raise ValidationError("unsupported file extension; expected .csv or .txt")
 
-    if uploaded_file.size > MAX_UPLOAD_BYTES:
-        raise ValidationError(f"file size exceeds {MAX_UPLOAD_BYTES} bytes")
+    max_bytes = settings.MAX_UPLOAD_BYTES
+    if uploaded_file.size > max_bytes:
+        raise ValidationError(f"file size exceeds {max_bytes} bytes")
 
     ct = (getattr(uploaded_file, "content_type", None) or "").lower()
     if ct and ct not in ALLOWED_CONTENT_TYPES:
