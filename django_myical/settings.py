@@ -166,3 +166,8 @@ LOGGING = {
 # File upload limits.
 DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_BYTES
 FILE_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_BYTES
+
+# Map Django's 'error' message tag to Bootstrap's 'danger' alert class.
+from django.contrib.messages import constants as messages_const  # noqa: E402
+
+MESSAGE_TAGS = {messages_const.ERROR: "danger"}

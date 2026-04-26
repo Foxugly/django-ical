@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-ical\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-26 23:43+0200\n"
+"POT-Creation-Date: 2026-04-26 23:57+0200\n"
 "PO-Revision-Date: 2026-04-26 23:43+0200\n"
 "Last-Translator: foxugly <rvilain@foxugly.com>\n"
 "Language-Team: French\n"
@@ -31,6 +31,14 @@ msgstr "Néerlandais"
 #: .\mycalendar\models.py:19 .\templates\model_form_upload.html:16
 msgid "Name"
 msgstr "Nom"
+
+#: .\mycalendar\views.py:17
+msgid "Calendar generated successfully."
+msgstr "Calendrier généré avec succès."
+
+#: .\mycalendar\views.py:19
+msgid "Calendar saved but ICS generation failed; check the CSV format."
+msgstr "Calendrier sauvegardé mais la génération ICS a échoué ; vérifiez le format CSV."
 
 #: .\templates\model_form_upload.html:10
 msgid "Form"
@@ -67,13 +75,17 @@ msgstr "Format du fichier CSV : <code>Date;Heure;Sujet;détail;Adresse;</code>"
 #: .\templates\model_form_upload.html:83
 msgid ""
 "For sport calendar : <code>Date;Hour;Team Home;Team Away;Address;</code>"
-msgstr "Pour calendrier sportif : <code>Date;Heure;Équipe Domicile;Équipe Visiteur;Adresse;</code>"
+msgstr ""
+"Pour calendrier sportif : <code>Date;Heure;Équipe Domicile;Équipe "
+"Visiteur;Adresse;</code>"
 
 #: .\templates\model_form_upload.html:84
 msgid ""
 "Example : <code>31/12/2021;21.30;RBP;SCC;Avenue Des Vaillants 2 1200 Woluwé-"
 "St-Lambert;</code>"
-msgstr "Exemple : <code>31/12/2021;21.30;RBP;SCC;Avenue Des Vaillants 2 1200 Woluwé-St-Lambert;</code>"
+msgstr ""
+"Exemple : <code>31/12/2021;21.30;RBP;SCC;Avenue Des Vaillants 2 1200 Woluwé-"
+"St-Lambert;</code>"
 
 #: .\templates\model_form_upload.html:86
 msgid "Format for date : <code>dd/mm/yyyy</code> or <code>yyyy-mm-dd</code>"
