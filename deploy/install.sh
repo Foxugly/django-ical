@@ -60,7 +60,14 @@ DJANGO_CSRF_TRUSTED_ORIGINS=https://$DOMAIN
 DJANGO_MAX_UPLOAD_BYTES=1048576
 DJANGO_EVENT_DURATION_MINUTES=90
 DJANGO_SITE_TIMEZONE=Europe/Brussels
+# HSTS: starts conservative (30 days, no subdomains, no preload).
+# Once the site is stable for ~1 month, bump to:
+#   DJANGO_HSTS_SECONDS=31536000
+#   DJANGO_HSTS_INCLUDE_SUBDOMAINS=True (only if all subdomains are HTTPS)
+#   DJANGO_HSTS_PRELOAD=True (only when ready to be on the HSTS preload list)
 DJANGO_HSTS_SECONDS=2592000
+DJANGO_HSTS_INCLUDE_SUBDOMAINS=False
+DJANGO_HSTS_PRELOAD=False
 EOF
     chmod 600 "$INSTALL_DIR/.env"
     chown "$RUN_USER:$RUN_GROUP" "$INSTALL_DIR/.env"
