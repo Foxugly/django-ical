@@ -15,9 +15,9 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-import django
-from django.core.exceptions import ValidationError
-from django.core.files.uploadedfile import SimpleUploadedFile
+import django  # noqa: E402
+from django.core.exceptions import ValidationError  # noqa: E402
+from django.core.files.uploadedfile import SimpleUploadedFile  # noqa: E402
 
 
 def _validate(path: Path) -> tuple[bool, str]:
