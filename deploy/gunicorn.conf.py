@@ -1,4 +1,4 @@
-bind = "unix:/run/django-ical/django-ical.sock"
+bind = "127.0.0.1:8002"
 workers = 3
 worker_class = "sync"
 timeout = 30

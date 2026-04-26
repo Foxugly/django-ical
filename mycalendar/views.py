@@ -5,7 +5,7 @@ from mycalendar.forms import MyCalendarForm
 from mycalendar.models import MyCalendar
 
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET", "HEAD", "POST"])
 def home(request):
     if request.method == "POST":
         form = MyCalendarForm(request.POST, request.FILES)
