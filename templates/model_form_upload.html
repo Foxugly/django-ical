@@ -7,7 +7,7 @@
         <div class="col-sm-6 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-left mb-0">{% trans "Form" %}</h3>
+                    <h3 class="float-start mb-0">{% trans "Form" %}</h3>
                 </div>
                 <div class="card-body">
                     <form enctype="multipart/form-data" method="post">
@@ -32,15 +32,15 @@
         <div class="col-sm-6  mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-left mb-0">{% trans "output" %}</h3>
+                    <h3 class="float-start mb-0">{% trans "output" %}</h3>
                 </div>
                 <div class="card-body">
                     {% for object in object_list %}
                     <div class="row justify-content-between">
                         <div>
-                            <a class="float-left" href="{{ object.document.url }}">{{object}}</a>
+                            <a class="float-start" href="{{ object.document.url }}">{{object}}</a>
                         </div>
-                        <div class="float-right">
+                        <div class="float-end">
                             {% if object.ics %}
                             <a class="btn btn-socialm" href="{{object.get_ics_facebook_link}}"
                                style="background-color: #4267B2"><i class="fab fa-facebook-f"
@@ -55,7 +55,7 @@
                                     class="fab fa-whatsapp" style="color:white"></i></a>
                             <a class="btn btn-socialm" href="{{object.get_ics_mail_link}}"
                                style="background-color: grey"><i class="fas fa-envelope" style="color:white"></i></a>
-                            <a class="btn btn-socialm copy" data-placement="top" data-toggle="tooltip"
+                            <a class="btn btn-socialm copy" data-bs-placement="top" data-bs-toggle="tooltip"
                                data-url="{{object.get_ics_full_url}}" href="#"
                                style="background-color:black"
                                title="copy to url the link of the ics file"><i
@@ -75,7 +75,7 @@
         <div class="col-sm-12 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-left mb-0">{% trans "Tutorial" %}</h3>
+                    <h3 class="float-start mb-0">{% trans "Tutorial" %}</h3>
                 </div>
                 <div class="card-body">
                     <p>{% trans "Give a name and a valid csv file" %}</p>
@@ -94,22 +94,37 @@
 
 {% block extrascripts %}
 <script src="{% static 'fileupload/js/file-upload.js' %}"></script>
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('.file-upload').file_upload();
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialise Bootstrap tooltips on copy buttons.
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+            new bootstrap.Tooltip(el);
+        });
 
-        $('.copy').on('click', function(){
-            var dummy = document.createElement("input");
-            //dummy.setAttribute("type", "hidden");
-            dummy.setAttribute("id", "dummy_id");
-            document.body.appendChild(dummy);
-            document.getElementById("dummy_id").value=$(this).data('url');
-            dummy.select();
-            dummy.setSelectionRange(0, 99999);
-            document.execCommand("copy");
-            document.body.removeChild(dummy);
+        // Initialise the file-upload widget on .file-upload labels.
+        document.querySelectorAll('.file-upload').forEach(function (el) {
+            new FileUpload(el);
+        });
+
+        // Copy-to-clipboard handler on .copy buttons.
+        document.querySelectorAll('.copy').forEach(function (btn) {
+            btn.addEventListener('click', function (event) {
+                event.preventDefault();
+                var url = btn.getAttribute('data-url');
+                if (!url) { return; }
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url);
+                } else {
+                    var dummy = document.createElement('input');
+                    dummy.value = url;
+                    document.body.appendChild(dummy);
+                    dummy.select();
+                    dummy.setSelectionRange(0, 99999);
+                    document.execCommand('copy');
+                    document.body.removeChild(dummy);
+                }
+            });
         });
     });
-
 </script>
 {% endblock extrascripts %}
