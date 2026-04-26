@@ -7,19 +7,16 @@
         <div class="col-sm-6 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-start mb-0">{% trans "Form" %}</h3>
+                    <h3 class="mb-0">{% trans "Form" %}</h3>
                 </div>
                 <div class="card-body">
                     <form enctype="multipart/form-data" method="post">
                         {% csrf_token %}
-                        <div class="form-group">
+                        <div class="mb-3">
                             <input class="form-control" id="id_name" maxlength="100" name="name" placeholder="{% trans 'Name' %}"
                                    required="true" type="text">
-                            <div class="">
-
-                            </div>
                         </div>
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label class="file-upload btn btn-success" for="id_document">{% trans "Select a valid CSV file" %}
                                 <input class="form-control" id="id_document" name="document" placeholder="{% trans 'Document' %}"
                                        required="true" type="file"></label>
@@ -32,15 +29,15 @@
         <div class="col-sm-6  mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-start mb-0">{% trans "output" %}</h3>
+                    <h3 class="mb-0">{% trans "output" %}</h3>
                 </div>
                 <div class="card-body">
                     {% for object in object_list %}
-                    <div class="row justify-content-between">
+                    <div class="d-flex justify-content-between align-items-center mb-2 gap-2 flex-wrap">
                         <div>
-                            <a class="float-start" href="{{ object.document.url }}">{{object}}</a>
+                            <a href="{{ object.document.url }}">{{object}}</a>
                         </div>
-                        <div class="float-end">
+                        <div>
                             {% if object.ics %}
                             <a class="btn btn-socialm" href="{{object.get_ics_facebook_link}}"
                                style="background-color: #4267B2"><i class="fab fa-facebook-f"
@@ -60,7 +57,7 @@
                                style="background-color:black"
                                title="copy to url the link of the ics file"><i
                                     class="far fa-clone" style="color:white"></i></a>
-                            <a class="btn btn-socialm" data-placement="top" href="{{ object.ics.url }}"
+                            <a class="btn btn-socialm" href="{{ object.ics.url }}"
                                style="background-color:black"
                                title="download the ics file"><i class="fas fa-download" style="color:white"></i></a>
                             {% endif %}
@@ -75,7 +72,7 @@
         <div class="col-sm-12 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-start mb-0">{% trans "Tutorial" %}</h3>
+                    <h3 class="mb-0">{% trans "Tutorial" %}</h3>
                 </div>
                 <div class="card-body">
                     <p>{% trans "Give a name and a valid csv file" %}</p>
