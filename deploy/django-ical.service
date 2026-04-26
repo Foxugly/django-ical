@@ -1,0 +1,15 @@
+[Unit]
+Description=django-ical gunicorn
+After=network.target
+
+[Service]
+User=django
+Group=www-data
+WorkingDirectory=/var/www/django_websites/django-ical
+EnvironmentFile=/var/www/django_websites/django-ical/.env
+ExecStart=/var/www/django_websites/django-ical/.venv/bin/gunicorn django_myical.wsgi:application -c deploy/gunicorn.conf.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
