@@ -1,102 +1,94 @@
 # Deploy runbook — ical.foxugly.com
 
-Production target: AWS EC2 (Amazon Linux 2023), domain `ical.foxugly.com`, install path `/srv/django-ical`.
+Target: fresh AWS EC2 (Ubuntu 24.04 LTS), domain `ical.foxugly.com`, install path `/var/www/django_websites/django-ical/`, user `www-data`.
 
-## Prerequisites on the EC2 host
+## Pre-requisites
 
-- Python 3.12+ installed (`sudo dnf install -y python3.12`).
-- nginx installed and running (`sudo dnf install -y nginx && sudo systemctl enable --now nginx`).
-- A DNS A record points `ical.foxugly.com` to the EC2 instance's public IP.
-- Security group allows inbound 22 (your IP), 80, 443 only.
+- Old server: data already snapshotted to `import/` locally and filtered with `scripts/clean_import.py` to produce `import-clean/`.
+- Tarball: `tar czf import-clean.tar.gz import-clean/` produced locally.
+- DNS A record `ical.foxugly.com` will be cut over to the new server's IP at the swap step (or use `/etc/hosts` override on your laptop to validate before DNS swap).
 
-## First-time deploy (or upgrade from old install)
+## On the new EC2 (one-time setup)
 
 ```bash
-# 1) Stop the old service (whatever it is — runserver, old systemd unit, etc.)
-sudo systemctl stop nginx   # if needed
-# kill any lingering python processes from the old setup
+# 1) System packages
+sudo apt update
+sudo apt install -y python3.12 python3.12-venv git nginx certbot python3-certbot-nginx
 
-# 2) Move the old install aside (preserves data on disk in case rollback is needed)
-sudo mv /path/to/old/django-ical /srv/django-ical.old-$(date +%Y%m%d)
+# 2) Code
+sudo mkdir -p /var/www/django_websites
+sudo chown www-data:www-data /var/www/django_websites
+cd /var/www/django_websites
+sudo -u www-data git clone <REPO_URL> django-ical
+cd django-ical
+sudo -u www-data git checkout upgrade/django-5
 
-# 3) Clone the upgraded repo
-sudo git clone https://github.com/<your-user>/django-ical.git /srv/django-ical
-sudo chown -R ec2-user:ec2-user /srv/django-ical
-cd /srv/django-ical
-git checkout upgrade/django-5   # until merged to master
+# 3) venv + deps
+sudo -u www-data python3.12 -m venv .venv
+sudo -u www-data .venv/bin/pip install --upgrade pip
+sudo -u www-data .venv/bin/pip install -r requirements.txt
 
-# 4) Restore prod data
-cp /srv/django-ical.old-*/db.sqlite3 /srv/django-ical/db.sqlite3
-cp -r /srv/django-ical.old-*/media /srv/django-ical/media
+# 4) Restore data from the local tarball
+# (from your laptop): scp import-clean.tar.gz ubuntu@<NEW_EC2_IP>:/tmp/
+# then on the EC2:
+cd /tmp && tar xzf import-clean.tar.gz
+sudo mv /tmp/import-clean/db.sqlite3 /var/www/django_websites/django-ical/db.sqlite3
+sudo mv /tmp/import-clean/media /var/www/django_websites/django-ical/media
+sudo chown -R www-data:www-data /var/www/django_websites/django-ical/db.sqlite3 /var/www/django_websites/django-ical/media
 
-# 5) Set up the venv
-python3.12 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# 6) Create the production .env
-cp .env.example .env
-# Generate a fresh SECRET_KEY:
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
-# Edit .env and set:
-#   DJANGO_SECRET_KEY=<output of the line above>
+# 5) Production .env
+cd /var/www/django_websites/django-ical
+sudo -u www-data cp .env.example .env
+sudo -u www-data .venv/bin/python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+# Edit .env (sudo -u www-data nano .env):
+#   DJANGO_SECRET_KEY=<output above>
 #   DJANGO_DEBUG=False
 #   DJANGO_ALLOWED_HOSTS=ical.foxugly.com
 #   DJANGO_SITE_DOMAIN=ical.foxugly.com
 #   DJANGO_STATE=PROD
-#   DATABASE_URL=sqlite:////srv/django-ical/db.sqlite3
+#   DATABASE_URL=sqlite:////var/www/django_websites/django-ical/db.sqlite3
 #   DJANGO_CSRF_TRUSTED_ORIGINS=https://ical.foxugly.com
-chmod 600 .env
+sudo chmod 600 .env
 
-# 7) Migrate and collect static
-python manage.py migrate
-python manage.py collectstatic --noinput
-python manage.py check --deploy   # should print "0 issues"
+# 6) Migrate + collectstatic
+sudo -u www-data .venv/bin/python manage.py migrate
+sudo -u www-data .venv/bin/python manage.py collectstatic --noinput
+sudo -u www-data .venv/bin/python manage.py check --deploy
 
-# 8) Install systemd unit
+# 7) systemd unit
 sudo cp deploy/django-ical.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now django-ical
 sudo systemctl status django-ical   # expect: active (running)
 
-# 9) Install nginx config + Let's Encrypt cert
-sudo cp deploy/nginx.conf /etc/nginx/conf.d/django-ical.conf
-sudo nginx -t   # syntax check
-sudo systemctl reload nginx
+# 8) nginx + Let's Encrypt
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/django-ical
+sudo ln -sf /etc/nginx/sites-available/django-ical /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
 
-# If no cert yet:
-sudo dnf install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d ical.foxugly.com --redirect --non-interactive --agree-tos -m rvilain@foxugly.com
+# 9) Cert (DNS must point to this server first, OR use --webroot challenge)
+sudo certbot --nginx -d ical.foxugly.com --redirect --non-interactive --agree-tos -m <YOUR_EMAIL>
 
 # 10) Smoke test
 curl -I https://ical.foxugly.com/   # expect 200 OK
-# Then load in a browser, upload a small CSV, confirm the .ics file generates.
-
-# 11) After 24h of stability, archive the old install
-sudo tar -czf /srv/django-ical.old-archive.tar.gz /srv/django-ical.old-*
-sudo rm -rf /srv/django-ical.old-*
 ```
+
+## DNS cutover
+
+Update the A record `ical.foxugly.com` → new EC2 public IP. TTL ≤ 5 min recommended for fast rollback.
 
 ## Updates (subsequent deploys)
 
 ```bash
-cd /srv/django-ical
-git pull
-source .venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py collectstatic --noinput
+cd /var/www/django_websites/django-ical
+sudo -u www-data git pull
+sudo -u www-data .venv/bin/pip install -r requirements.txt
+sudo -u www-data .venv/bin/python manage.py migrate
+sudo -u www-data .venv/bin/python manage.py collectstatic --noinput
 sudo systemctl restart django-ical
 ```
 
 ## Rollback
 
-The old install lives at `/srv/django-ical.old-YYYYMMDD`. To roll back:
-
-```bash
-sudo systemctl stop django-ical
-sudo mv /srv/django-ical /srv/django-ical.failed
-sudo mv /srv/django-ical.old-YYYYMMDD /srv/django-ical
-# Restart whatever the old service was.
-```
+DNS-level: revert the A record to the old server. Effective in <5 min if TTL was low.
