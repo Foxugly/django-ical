@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.shortcuts import HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import path, reverse
 from django.utils import translation
 from django.utils.translation import check_for_language

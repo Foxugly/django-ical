@@ -1,6 +1,4 @@
 """Pure CSV→ICS conversion. No Django, no IO."""
-from __future__ import annotations
-
 import hashlib
 from dataclasses import dataclass
 from datetime import datetime, timedelta
