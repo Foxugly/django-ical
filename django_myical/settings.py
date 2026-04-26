@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_myical.context_processors.site_state',
             ],
             'libraries': {
                 'common_tags': 'common_tags',
