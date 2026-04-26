@@ -7,24 +7,24 @@
         <div class="col-sm-6 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-left mb-0">Form</h3>
+                    <h3 class="float-left mb-0">{% trans "Form" %}</h3>
                 </div>
                 <div class="card-body">
                     <form enctype="multipart/form-data" method="post">
                         {% csrf_token %}
                         <div class="form-group">
-                            <input class="form-control" id="id_name" maxlength="100" name="name" placeholder="Name"
+                            <input class="form-control" id="id_name" maxlength="100" name="name" placeholder="{% trans 'Name' %}"
                                    required="true" type="text">
                             <div class="">
 
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="file-upload btn btn-success" for="id_document">Select a valid CSV file
-                                <input class="form-control" id="id_document" name="document" placeholder="Document"
+                            <label class="file-upload btn btn-success" for="id_document">{% trans "Select a valid CSV file" %}
+                                <input class="form-control" id="id_document" name="document" placeholder="{% trans 'Document' %}"
                                        required="true" type="file"></label>
                         </div>
-                        <button class="submit-btn btn btn-primary" type="submit">Generate ical</button>
+                        <button class="submit-btn btn btn-primary" type="submit">{% trans "Generate ical" %}</button>
                     </form>
                 </div>
             </div>
@@ -32,7 +32,7 @@
         <div class="col-sm-6  mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-left mb-0">output</h3>
+                    <h3 class="float-left mb-0">{% trans "output" %}</h3>
                 </div>
                 <div class="card-body">
                     {% for object in object_list %}
@@ -75,16 +75,16 @@
         <div class="col-sm-12 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="float-left mb-0">Tutorial</h3>
+                    <h3 class="float-left mb-0">{% trans "Tutorial" %}</h3>
                 </div>
                 <div class="card-body">
-                    <p>Give a name and a valid csv file</p>
-                    <p>Format of csv file : <code>Date;Hour;Subject;detail;Address;</code></p>
-                    <p>For sport calendar : <code>Date;Hour;Team Home;Team Away;Address;</code></p>
-                    <p>Example : <code>31/12/2021;21.30;RBP;SCC;Avenue Des Vaillants 2 1200 Woluwé-St-Lambert;</code>
+                    <p>{% trans "Give a name and a valid csv file" %}</p>
+                    <p>{% blocktrans %}Format of csv file : <code>Date;Hour;Subject;detail;Address;</code>{% endblocktrans %}</p>
+                    <p>{% blocktrans %}For sport calendar : <code>Date;Hour;Team Home;Team Away;Address;</code>{% endblocktrans %}</p>
+                    <p>{% blocktrans %}Example : <code>31/12/2021;21.30;RBP;SCC;Avenue Des Vaillants 2 1200 Woluwé-St-Lambert;</code>{% endblocktrans %}
                     </p>
-                    <p>Format for date : <code>dd/mm/yyyy</code> or <code>yyyy-mm-dd</code></p>
-                    <p>Format for hour : <code>hh:mm</code> or <code>hh.mm</code></p>
+                    <p>{% blocktrans %}Format for date : <code>dd/mm/yyyy</code> or <code>yyyy-mm-dd</code>{% endblocktrans %}</p>
+                    <p>{% blocktrans %}Format for hour : <code>hh:mm</code> or <code>hh.mm</code>{% endblocktrans %}</p>
                 </div>
             </div>
         </div>

@@ -1,0 +1,84 @@
+# French translation for django-ical.
+# Copyright (C) 2026
+# This file is distributed under the same license as the django-ical package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: django-ical\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-26 23:43+0200\n"
+"PO-Revision-Date: 2026-04-26 23:43+0200\n"
+"Last-Translator: foxugly <rvilain@foxugly.com>\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: .\django_myical\settings.py:108
+msgid "English"
+msgstr "Anglais"
+
+#: .\django_myical\settings.py:109
+msgid "Français"
+msgstr "Français"
+
+#: .\django_myical\settings.py:110
+msgid "Nederlands"
+msgstr "Néerlandais"
+
+#: .\mycalendar\models.py:19 .\templates\model_form_upload.html:16
+msgid "Name"
+msgstr "Nom"
+
+#: .\templates\model_form_upload.html:10
+msgid "Form"
+msgstr "Formulaire"
+
+#: .\templates\model_form_upload.html:23
+msgid "Select a valid CSV file"
+msgstr "Choisir un fichier CSV valide"
+
+#: .\templates\model_form_upload.html:24
+msgid "Document"
+msgstr "Document"
+
+#: .\templates\model_form_upload.html:27
+msgid "Generate ical"
+msgstr "Générer le calendrier"
+
+#: .\templates\model_form_upload.html:35
+msgid "output"
+msgstr "sortie"
+
+#: .\templates\model_form_upload.html:78
+msgid "Tutorial"
+msgstr "Tutoriel"
+
+#: .\templates\model_form_upload.html:81
+msgid "Give a name and a valid csv file"
+msgstr "Donnez un nom et un fichier CSV valide"
+
+#: .\templates\model_form_upload.html:82
+msgid "Format of csv file : <code>Date;Hour;Subject;detail;Address;</code>"
+msgstr "Format du fichier CSV : <code>Date;Heure;Sujet;détail;Adresse;</code>"
+
+#: .\templates\model_form_upload.html:83
+msgid ""
+"For sport calendar : <code>Date;Hour;Team Home;Team Away;Address;</code>"
+msgstr "Pour calendrier sportif : <code>Date;Heure;Équipe Domicile;Équipe Visiteur;Adresse;</code>"
+
+#: .\templates\model_form_upload.html:84
+msgid ""
+"Example : <code>31/12/2021;21.30;RBP;SCC;Avenue Des Vaillants 2 1200 Woluwé-"
+"St-Lambert;</code>"
+msgstr "Exemple : <code>31/12/2021;21.30;RBP;SCC;Avenue Des Vaillants 2 1200 Woluwé-St-Lambert;</code>"
+
+#: .\templates\model_form_upload.html:86
+msgid "Format for date : <code>dd/mm/yyyy</code> or <code>yyyy-mm-dd</code>"
+msgstr "Format de date : <code>jj/mm/aaaa</code> ou <code>aaaa-mm-jj</code>"
+
+#: .\templates\model_form_upload.html:87
+msgid "Format for hour : <code>hh:mm</code> or <code>hh.mm</code>"
+msgstr "Format d'heure : <code>hh:mm</code> ou <code>hh.mm</code>"
