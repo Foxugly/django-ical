@@ -5,7 +5,7 @@
 set -euo pipefail
 
 INSTALL_DIR=/var/www/django_websites/django-ical
-RUN_USER=www-data
+RUN_USER=django
 RUN_GROUP=www-data
 PYTHON=python3.12
 DOMAIN=ical.foxugly.com
@@ -17,6 +17,13 @@ fi
 
 if [ "$EUID" -ne 0 ]; then
     echo "error: run as root (sudo bash deploy/install.sh)" >&2
+    exit 1
+fi
+
+if ! id -u "$RUN_USER" >/dev/null 2>&1; then
+    echo "error: user '$RUN_USER' does not exist on this host." >&2
+    echo "       Create it first: sudo useradd --system --no-create-home --shell /usr/sbin/nologin $RUN_USER" >&2
+    echo "       Then add it to the $RUN_GROUP group: sudo usermod -aG $RUN_GROUP $RUN_USER" >&2
     exit 1
 fi
 

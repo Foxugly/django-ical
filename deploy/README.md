@@ -13,6 +13,15 @@ bash scripts/build_bundle.sh
 
 ## On the new EC2 (Ubuntu)
 
+**Prerequisite — `django` user must exist before running install.sh.**
+The service runs as `django:www-data`. If the user is absent, install.sh aborts with a clear message.
+Create it once on a fresh host:
+
+```bash
+sudo useradd --system --no-create-home --shell /usr/sbin/nologin django
+sudo usermod -aG www-data django
+```
+
 ```bash
 # 1) Copy the bundle
 scp django-ical-deploy.tar.gz ubuntu@<NEW_EC2_IP>:/tmp/

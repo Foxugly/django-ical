@@ -3,7 +3,7 @@ Description=django-ical gunicorn
 After=network.target
 
 [Service]
-User=www-data
+User=django
 Group=www-data
 WorkingDirectory=/var/www/django_websites/django-ical
 EnvironmentFile=/var/www/django_websites/django-ical/.env
