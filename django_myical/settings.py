@@ -173,3 +173,17 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_BYTES
 from django.contrib.messages import constants as messages_const  # noqa: E402
 
 MESSAGE_TAGS = {messages_const.ERROR: "danger"}
+
+# Sentry — optional. Set DJANGO_SENTRY_DSN to enable.
+SENTRY_DSN = env("DJANGO_SENTRY_DSN", default="")
+if SENTRY_DSN:
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()],
+        environment=env("DJANGO_STATE", default="PROD"),
+        traces_sample_rate=0.1,
+        send_default_pii=False,
+    )

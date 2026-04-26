@@ -6,6 +6,8 @@
 #
 asgiref==3.11.1
     # via django
+certifi==2026.4.22
+    # via sentry-sdk
 django==5.2.13
     # via
     #   -r requirements.in
@@ -22,6 +24,8 @@ packaging==26.2
     # via gunicorn
 python-dateutil==2.9.0.post0
     # via icalendar
+sentry-sdk==2.58.0
+    # via -r requirements.in
 six==1.17.0
     # via python-dateutil
 sqlparse==0.5.5
@@ -30,5 +34,7 @@ tzdata==2026.2
     # via
     #   django
     #   icalendar
+urllib3==2.6.3
+    # via sentry-sdk
 whitenoise==6.12.0
     # via -r requirements.in
