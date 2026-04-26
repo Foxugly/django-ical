@@ -1,4 +1,4 @@
-from io import BytesIO
+import logging
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -31,6 +31,7 @@ def test_get_ics_creates_ics_file():
 
 @pytest.mark.django_db
 def test_get_ics_returns_false_on_bad_csv(caplog):
+    caplog.set_level(logging.ERROR, logger="mycalendar.models")
     instance = MyCalendar.objects.create(
         name="Bad",
         document=SimpleUploadedFile("bad.csv", b"not;a;valid;date;line;", content_type="text/csv"),
