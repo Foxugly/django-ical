@@ -43,7 +43,7 @@ def _parse_time(token: str) -> tuple[int, int]:
 
 
 def parse_row(row: str, *, tz: ZoneInfo) -> Optional[ParsedEvent]:
-    fields = [f.strip() for f in row.rstrip("\n").split(";")]
+    fields = [f.strip() for f in row.rstrip("\r\n").split(";")]
     if len(fields) < 3:
         return None
 
@@ -64,10 +64,11 @@ def parse_row(row: str, *, tz: ZoneInfo) -> Optional[ParsedEvent]:
 
 
 def build_calendar(csv_text: str, *, name: str, tz: ZoneInfo) -> bytes:
+    safe_name = name.splitlines()[0].strip() if name.strip() else ""
     cal = Calendar()
-    cal.add("prodid", f"-// {name} //")
+    cal.add("prodid", f"-// {safe_name} //")
     cal.add("version", "2.0")
-    cal.add("X-WR-CALNAME", name)
+    cal.add("X-WR-CALNAME", safe_name)
 
     now = datetime.now(tz=tz)
     for row in csv_text.splitlines():
