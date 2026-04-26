@@ -38,3 +38,13 @@ The project is intentionally small — most logic lives in two files.
 - `SECRET_KEY` and `DEBUG=True` are committed in `settings.py` — treat this as a dev-only project unless deploying with overrides.
 - Languages declared: `en`, `fr`, `nl` (Dutch). `LocaleMiddleware` is enabled but no `locale/` directory exists in the repo yet — `makemessages` will need to be run first.
 - `STATE` (settings.py) is a custom flag (`INT`/`ACC`/`PROD`) shown as a ribbon in `base.html` when `DEBUG` is true. It is **not** wired to a context processor, so the template tag `{{ STATE }}` only resolves if you pass it through manually.
+
+## Environment
+
+All runtime config is in `.env` (see `.env.example`). Key env vars:
+- `DJANGO_SECRET_KEY` (required)
+- `DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`, `DJANGO_SITE_DOMAIN`, `DJANGO_CSRF_TRUSTED_ORIGINS`
+- `DJANGO_MAX_UPLOAD_BYTES`, `DJANGO_EVENT_DURATION_MINUTES`, `DJANGO_SITE_TIMEZONE`
+- `DJANGO_HSTS_SECONDS`, `DJANGO_HSTS_INCLUDE_SUBDOMAINS`, `DJANGO_HSTS_PRELOAD`
+- `DJANGO_SENTRY_DSN` (optional)
+- `DATABASE_URL` (defaults to local SQLite)
