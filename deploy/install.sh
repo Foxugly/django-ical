@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Self-install script for django-ical on a fresh Ubuntu host.
-# Run AFTER extracting django-ical-deploy.tar.gz into /var/www/django_websites/django-ical/.
-# Run as root (sudo bash deploy/install.sh).
+# Idempotent installer for django-ical on Ubuntu.
+# Run after `git clone -b master https://github.com/Foxugly/django-ical.git $INSTALL_DIR`.
+# Re-run after `git pull` to apply updates.
+# Run as root: sudo bash deploy/install.sh
 set -euo pipefail
 
 INSTALL_DIR=/var/www/django_websites/django-ical
@@ -11,7 +12,8 @@ PYTHON=python3.12
 DOMAIN=ical.foxugly.com
 
 if [ ! -d "$INSTALL_DIR" ]; then
-    echo "error: $INSTALL_DIR does not exist. Extract the tarball first." >&2
+    echo "error: $INSTALL_DIR does not exist. Clone the repo first:" >&2
+    echo "       sudo -u $RUN_USER git clone -b master https://github.com/Foxugly/django-ical.git $INSTALL_DIR" >&2
     exit 1
 fi
 
@@ -82,7 +84,6 @@ systemctl --no-pager --quiet is-active django-ical && echo "    django-ical acti
 echo "==> Installing nginx site"
 cp "$INSTALL_DIR/deploy/nginx.conf" /etc/nginx/sites-available/django-ical
 ln -sf /etc/nginx/sites-available/django-ical /etc/nginx/sites-enabled/django-ical
-rm -f /etc/nginx/sites-enabled/default
 nginx -t
 systemctl reload nginx
 
