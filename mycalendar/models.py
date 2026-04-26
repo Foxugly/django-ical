@@ -8,6 +8,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from mycalendar.services.ics import build_calendar
+from mycalendar.validators import validate_csv_upload
 
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ TZ = ZoneInfo("Europe/Brussels")
 
 class MyCalendar(models.Model):
     name = models.CharField(max_length=100, verbose_name=_("Name"))
-    document = models.FileField(upload_to="documents/")
+    document = models.FileField(upload_to="documents/", validators=[validate_csv_upload])
     ics = models.FileField(upload_to="ics/", blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
