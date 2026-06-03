@@ -19,7 +19,7 @@ class MyCalendar(models.Model):
     name = models.CharField(max_length=100, verbose_name=_("Name"))
     document = models.FileField(upload_to="documents/", validators=[validate_csv_upload])
     ics = models.FileField(upload_to="ics/", blank=True, null=True)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     def __str__(self) -> str:
         return self.name
