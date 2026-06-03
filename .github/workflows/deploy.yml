@@ -59,6 +59,7 @@ jobs:
               "sudo -u django bash -c 'umask 027; cd /var/www/django_websites/django-ical && git fetch --quiet && git reset --hard --quiet origin/master'",
               "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/master:deploy/django-ical-env-fetch.service > /etc/systemd/system/django-ical-env-fetch.service",
               "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/master:deploy/django-ical.service > /etc/systemd/system/django-ical.service",
+              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/master:deploy/fetch-env-from-ssm.sh > /usr/local/sbin/django-ical-env-fetch.sh && chmod 0755 /usr/local/sbin/django-ical-env-fetch.sh && chown root:root /usr/local/sbin/django-ical-env-fetch.sh",
               "systemctl daemon-reload",
               "systemctl enable --quiet django-ical-env-fetch.service",
               "systemctl restart django-ical-env-fetch.service",

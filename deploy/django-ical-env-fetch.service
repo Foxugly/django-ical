@@ -26,7 +26,11 @@ ProtectHome=yes
 NoNewPrivileges=yes
 RestrictSUIDSGID=yes
 
-ExecStart=/var/www/django_websites/django-ical/deploy/fetch-env-from-ssm.sh
+# §3.10: runs as root, so the script must NOT live in the django-writable tree.
+# It is installed root:root 0755 at /usr/local/sbin/django-ical-env-fetch.sh by
+# ROOT from the committed git blob (see deploy.yml) — deploy/fetch-env-from-ssm.sh
+# is the versioned source, never the execution target.
+ExecStart=/usr/local/sbin/django-ical-env-fetch.sh
 TimeoutStartSec=120
 
 [Install]
