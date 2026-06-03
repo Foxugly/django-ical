@@ -12,9 +12,9 @@
 set -euo pipefail
 
 SECRET_KEYS=(
-  DJANGO_SECRET_KEY
+  SECRET_KEY
   DATABASE_URL
-  DJANGO_SENTRY_DSN
+  SENTRY_DSN
 )
 
 PREFIX="/ical/prod"

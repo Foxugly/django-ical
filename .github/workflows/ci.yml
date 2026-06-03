@@ -28,9 +28,9 @@ jobs:
 
       - name: Run tests
         env:
-          DJANGO_SECRET_KEY: ci-test-key-not-for-production
-          DJANGO_DEBUG: "True"
-          DJANGO_ALLOWED_HOSTS: testserver,localhost
-          DJANGO_SITE_DOMAIN: localhost
-          DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost
+          SECRET_KEY: ci-test-key-not-for-production
+          DEBUG: "True"
+          ALLOWED_HOSTS: testserver,localhost
+          SITE_DOMAIN: localhost
+          CSRF_TRUSTED_ORIGINS: http://localhost
         run: pytest -v
