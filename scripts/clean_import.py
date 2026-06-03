@@ -66,11 +66,11 @@ def main() -> int:
     db_for_django = (dst if not args.dry_run else src) / "db.sqlite3"
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_myical.settings")
     os.environ["DATABASE_URL"] = f"sqlite:///{db_for_django}"
-    os.environ.setdefault("DJANGO_SECRET_KEY", "clean-import-script-not-for-runtime")
-    os.environ.setdefault("DJANGO_DEBUG", "True")
-    os.environ.setdefault("DJANGO_ALLOWED_HOSTS", "localhost")
-    os.environ.setdefault("DJANGO_SITE_DOMAIN", "localhost")
-    os.environ.setdefault("DJANGO_CSRF_TRUSTED_ORIGINS", "http://localhost")
+    os.environ.setdefault("SECRET_KEY", "clean-import-script-not-for-runtime")
+    os.environ.setdefault("DEBUG", "True")
+    os.environ.setdefault("ALLOWED_HOSTS", "localhost")
+    os.environ.setdefault("SITE_DOMAIN", "localhost")
+    os.environ.setdefault("CSRF_TRUSTED_ORIGINS", "http://localhost")
     django.setup()
 
     from mycalendar.models import MyCalendar

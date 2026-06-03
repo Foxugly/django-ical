@@ -50,25 +50,25 @@ if [ ! -f "$INSTALL_DIR/.env" ]; then
     SECRET=$(sudo -u "$RUN_USER" "$INSTALL_DIR/.venv/bin/python" -c \
         "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
     sudo -u "$RUN_USER" tee "$INSTALL_DIR/.env" > /dev/null <<EOF
-DJANGO_SECRET_KEY=$SECRET
-DJANGO_DEBUG=False
-DJANGO_ALLOWED_HOSTS=$DOMAIN
-DJANGO_SITE_DOMAIN=$DOMAIN
-DJANGO_STATE=PROD
+SECRET_KEY=$SECRET
+DEBUG=False
+ALLOWED_HOSTS=$DOMAIN
+SITE_DOMAIN=$DOMAIN
+DJANGO_ENV=PROD
 DATABASE_URL=sqlite:///$INSTALL_DIR/db.sqlite3
-DJANGO_CSRF_TRUSTED_ORIGINS=https://$DOMAIN
-DJANGO_MAX_UPLOAD_BYTES=1048576
-DJANGO_EVENT_DURATION_MINUTES=90
-DJANGO_SITE_TIMEZONE=Europe/Brussels
+CSRF_TRUSTED_ORIGINS=https://$DOMAIN
+MAX_UPLOAD_BYTES=1048576
+EVENT_DURATION_MINUTES=90
+SITE_TIMEZONE=Europe/Brussels
 # HSTS: starts conservative (30 days, no subdomains, no preload).
 # Once the site is stable for ~1 month, bump to:
-#   DJANGO_HSTS_SECONDS=31536000
-#   DJANGO_HSTS_INCLUDE_SUBDOMAINS=True (only if all subdomains are HTTPS)
-#   DJANGO_HSTS_PRELOAD=True (only when ready to be on the HSTS preload list)
-DJANGO_HSTS_SECONDS=2592000
-DJANGO_HSTS_INCLUDE_SUBDOMAINS=False
-DJANGO_HSTS_PRELOAD=False
-DJANGO_SENTRY_DSN=
+#   HSTS_SECONDS=31536000
+#   HSTS_INCLUDE_SUBDOMAINS=True (only if all subdomains are HTTPS)
+#   HSTS_PRELOAD=True (only when ready to be on the HSTS preload list)
+HSTS_SECONDS=2592000
+HSTS_INCLUDE_SUBDOMAINS=False
+HSTS_PRELOAD=False
+SENTRY_DSN=
 EOF
     chmod 600 "$INSTALL_DIR/.env"
     chown "$RUN_USER:$RUN_GROUP" "$INSTALL_DIR/.env"

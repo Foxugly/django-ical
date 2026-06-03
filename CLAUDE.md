@@ -42,9 +42,9 @@ The project is intentionally small — most logic lives in two files.
 ## Environment
 
 All runtime config is in `.env` (see `.env.example`). Key env vars:
-- `DJANGO_SECRET_KEY` (required)
-- `DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`, `DJANGO_SITE_DOMAIN`, `DJANGO_CSRF_TRUSTED_ORIGINS`
-- `DJANGO_MAX_UPLOAD_BYTES`, `DJANGO_EVENT_DURATION_MINUTES`, `DJANGO_SITE_TIMEZONE`
-- `DJANGO_HSTS_SECONDS`, `DJANGO_HSTS_INCLUDE_SUBDOMAINS`, `DJANGO_HSTS_PRELOAD`
-- `DJANGO_SENTRY_DSN` (optional)
+- `SECRET_KEY` (required)
+- `DEBUG`, `ALLOWED_HOSTS`, `SITE_DOMAIN`, `CSRF_TRUSTED_ORIGINS`
+- `MAX_UPLOAD_BYTES`, `EVENT_DURATION_MINUTES`, `SITE_TIMEZONE`
+- `HSTS_SECONDS`, `HSTS_INCLUDE_SUBDOMAINS`, `HSTS_PRELOAD`
+- `DJANGO_ENV` (environment ribbon / Sentry env), `SENTRY_DSN` (optional)
 - `DATABASE_URL` (defaults to local SQLite)

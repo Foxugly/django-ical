@@ -18,27 +18,27 @@ from django.utils.translation import gettext_lazy as _
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(
-    DJANGO_DEBUG=(bool, False),
-    DJANGO_ALLOWED_HOSTS=(list, []),
-    DJANGO_CSRF_TRUSTED_ORIGINS=(list, []),
-    DJANGO_MAX_UPLOAD_BYTES=(int, 1024 * 1024),
-    DJANGO_EVENT_DURATION_MINUTES=(int, 90),
-    DJANGO_SITE_TIMEZONE=(str, "Europe/Brussels"),
-    DJANGO_HSTS_SECONDS=(int, 60 * 60 * 24 * 30),
-    DJANGO_HSTS_INCLUDE_SUBDOMAINS=(bool, False),
-    DJANGO_HSTS_PRELOAD=(bool, False),
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, []),
+    CSRF_TRUSTED_ORIGINS=(list, []),
+    MAX_UPLOAD_BYTES=(int, 1024 * 1024),
+    EVENT_DURATION_MINUTES=(int, 90),
+    SITE_TIMEZONE=(str, "Europe/Brussels"),
+    HSTS_SECONDS=(int, 60 * 60 * 24 * 30),
+    HSTS_INCLUDE_SUBDOMAINS=(bool, False),
+    HSTS_PRELOAD=(bool, False),
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
-SECRET_KEY = env("DJANGO_SECRET_KEY")
-DEBUG = env("DJANGO_DEBUG")
-ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS")
-SITE_DOMAIN = env("DJANGO_SITE_DOMAIN", default="localhost")
-STATE = env("DJANGO_STATE", default="DEV")
-CSRF_TRUSTED_ORIGINS = env("DJANGO_CSRF_TRUSTED_ORIGINS")
-MAX_UPLOAD_BYTES = env("DJANGO_MAX_UPLOAD_BYTES")
-EVENT_DURATION_MINUTES = env("DJANGO_EVENT_DURATION_MINUTES")
-SITE_TIMEZONE = env("DJANGO_SITE_TIMEZONE")
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env("DEBUG")
+ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+SITE_DOMAIN = env("SITE_DOMAIN", default="localhost")
+STATE = env("DJANGO_ENV", default="DEV")
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
+MAX_UPLOAD_BYTES = env("MAX_UPLOAD_BYTES")
+EVENT_DURATION_MINUTES = env("EVENT_DURATION_MINUTES")
+SITE_TIMEZONE = env("SITE_TIMEZONE")
 
 DATABASES = {"default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")}
 
@@ -131,9 +131,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
-    SECURE_HSTS_SECONDS = env("DJANGO_HSTS_SECONDS")
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("DJANGO_HSTS_INCLUDE_SUBDOMAINS", default=False)
-    SECURE_HSTS_PRELOAD = env.bool("DJANGO_HSTS_PRELOAD", default=False)
+    SECURE_HSTS_SECONDS = env("HSTS_SECONDS")
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("HSTS_INCLUDE_SUBDOMAINS", default=False)
+    SECURE_HSTS_PRELOAD = env.bool("HSTS_PRELOAD", default=False)
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -174,8 +174,8 @@ from django.contrib.messages import constants as messages_const  # noqa: E402
 
 MESSAGE_TAGS = {messages_const.ERROR: "danger"}
 
-# Sentry — optional. Set DJANGO_SENTRY_DSN to enable.
-SENTRY_DSN = env("DJANGO_SENTRY_DSN", default="")
+# Sentry — optional. Set SENTRY_DSN to enable.
+SENTRY_DSN = env("SENTRY_DSN", default="")
 if SENTRY_DSN:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
@@ -195,7 +195,7 @@ if SENTRY_DSN:
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()],
-        environment=env("DJANGO_STATE", default="PROD"),
+        environment=env("DJANGO_ENV", default="PROD"),
         traces_sample_rate=0.1,
         send_default_pii=False,
         before_send=_drop_benign_noise,
