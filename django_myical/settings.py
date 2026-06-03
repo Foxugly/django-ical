@@ -179,6 +179,18 @@ SENTRY_DSN = env("DJANGO_SENTRY_DSN", default="")
 if SENTRY_DSN:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
+    from django.core.exceptions import DisallowedHost
+
+    def _drop_benign_noise(event, hint):
+        # Internet scanners hit the raw EC2 IP; ical is nginx's implicit default vhost,
+        # so Django rejects them as DisallowedHost (400). That rejection is the correct,
+        # intended behaviour — not an error worth paging on. Drop it instead of letting
+        # bot traffic flood Sentry (~500/day). Do NOT "fix" this by adding the IP to
+        # ALLOWED_HOSTS — that would make Django serve Host-spoofed requests.
+        exc = hint.get("exc_info")
+        if exc and isinstance(exc[1], DisallowedHost):
+            return None
+        return event
 
     sentry_sdk.init(
         dsn=SENTRY_DSN,
@@ -186,4 +198,5 @@ if SENTRY_DSN:
         environment=env("DJANGO_STATE", default="PROD"),
         traces_sample_rate=0.1,
         send_default_pii=False,
+        before_send=_drop_benign_noise,
     )
