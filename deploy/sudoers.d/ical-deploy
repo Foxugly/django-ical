@@ -1,0 +1,22 @@
+# /etc/sudoers.d/ical-deploy — least-privilege deploy grants for django-ical.
+#
+# django may ONLY control services (restart/reload), never install units or edit
+# /etc. Units & nginx configs are installed by ROOT from the COMMITTED git blob in
+# the deploy pipeline (never cp'd from the django-writable tree) — closes the
+# django -> root escalation. Keep /bin/systemctl literal (usrmerge: /bin -> /usr/bin;
+# sudo matches the command path literally, so the deploy must invoke /bin/systemctl).
+#
+# Install (by root, from a verified copy — never by the deploy script):
+#   sudo visudo -c -f deploy/sudoers.d/ical-deploy
+#   sudo install -m 0440 -o root -g root deploy/sudoers.d/ical-deploy /etc/sudoers.d/ical-deploy
+
+Cmnd_Alias ICAL_SVC = \
+      /bin/systemctl restart django-ical, \
+      /bin/systemctl restart django-ical-env-fetch
+Cmnd_Alias ICAL_WEB = \
+      /usr/sbin/nginx -t, \
+      /bin/systemctl reload nginx
+
+django ALL=(root) NOPASSWD: ICAL_SVC, ICAL_WEB
+
+Defaults!ICAL_SVC,ICAL_WEB !setenv, !env_keep

@@ -1,12 +1,17 @@
 [Unit]
 Description=django-ical gunicorn
-After=network.target
+After=network.target django-ical-env-fetch.service
+Requires=django-ical-env-fetch.service
 
 [Service]
 User=django
 Group=www-data
+# New runtime files (cache, __pycache__, collectstatic) born 640/750, group
+# www-data — no world-read, no per-deploy permission drift.
+UMask=0027
 WorkingDirectory=/var/www/django_websites/django-ical
-EnvironmentFile=/var/www/django_websites/django-ical/.env
+# Secrets now come from SSM via the env-fetch oneshot (tmpfs), not an on-disk .env.
+EnvironmentFile=/run/ical/.env
 ExecStart=/var/www/django_websites/django-ical/.venv/bin/gunicorn django_myical.wsgi:application -c deploy/gunicorn.conf.py
 Restart=on-failure
 RestartSec=3

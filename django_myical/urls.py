@@ -6,6 +6,7 @@ from django.urls import path, reverse
 from django.utils import translation
 from django.utils.translation import check_for_language
 
+from django_myical.health import health
 from mycalendar.views import home
 
 
@@ -31,6 +32,7 @@ def set_lang(request):
 
 urlpatterns = [
     path("", home, name="home"),
+    path("health/", health, name="health"),
     path("admin/", admin.site.urls),
     path("lang/", set_lang, name="lang"),
 ]

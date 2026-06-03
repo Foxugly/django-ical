@@ -1,0 +1,33 @@
+[Unit]
+Description=django-ical — fetch secrets from SSM Parameter Store
+# AWS API call needs the network up and a sane clock (SigV4).
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Type=oneshot + RemainAfterExit=yes = boot barrier: downstream units with
+# Requires=django-ical-env-fetch.service wait for a successful exit, and the
+# unit stays "active" so the dependency edge holds for the whole boot.
+Type=oneshot
+RemainAfterExit=yes
+
+# Runs as root to chown /run/ical/.env to django:www-data. IAM identity for
+# the SSM call comes from the EC2 instance role via IMDS, not disk creds.
+User=root
+
+# Creates /run/ical (0755 root:root) before ExecStart; the script chmods/chowns
+# the .env inside. RuntimeDirectoryPreserve keeps it for downstream gunicorn.
+RuntimeDirectory=ical
+RuntimeDirectoryPreserve=yes
+
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+NoNewPrivileges=yes
+RestrictSUIDSGID=yes
+
+ExecStart=/var/www/django_websites/django-ical/deploy/fetch-env-from-ssm.sh
+TimeoutStartSec=120
+
+[Install]
+WantedBy=multi-user.target
