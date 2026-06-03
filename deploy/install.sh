@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Idempotent installer for django-ical on Ubuntu.
-# Run after `git clone -b master https://github.com/Foxugly/django-ical.git $INSTALL_DIR`.
+# Run after `git clone -b main https://github.com/Foxugly/django-ical.git $INSTALL_DIR`.
 # Re-run after `git pull` to apply updates.
 # Run as root: sudo bash deploy/install.sh
 set -euo pipefail
@@ -13,7 +13,7 @@ DOMAIN=ical.foxugly.com
 
 if [ ! -d "$INSTALL_DIR" ]; then
     echo "error: $INSTALL_DIR does not exist. Clone the repo first:" >&2
-    echo "       sudo -u $RUN_USER git clone -b master https://github.com/Foxugly/django-ical.git $INSTALL_DIR" >&2
+    echo "       sudo -u $RUN_USER git clone -b main https://github.com/Foxugly/django-ical.git $INSTALL_DIR" >&2
     exit 1
 fi
 

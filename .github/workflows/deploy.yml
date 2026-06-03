@@ -7,7 +7,7 @@ on:
     types:
       - completed
     branches:
-      - master
+      - main
 
 permissions:
   id-token: write    # required for OIDC token minting
@@ -36,11 +36,11 @@ jobs:
           # AWS-RunShellScript runs these as ROOT, in order:
           #   1. chown tree -> django:www-data (self-heals root-owned git objects
           #      left by manual ops, so the django git reset below can't fail on them).
-          #   2. as django, umask 027: fetch + hard-reset to origin/master. The umask
+          #   2. as django, umask 027: fetch + hard-reset to origin/main. The umask
           #      makes every file git recreates be 640/750 (group www-data), killing
           #      the per-deploy world-readable (644) permission drift at the source.
           #   3. as ROOT: install both systemd units straight from the COMMITTED git
-          #      blob at origin/master — never from the django-writable working tree
+          #      blob at origin/main — never from the django-writable working tree
           #      (closes the cp-unit -> root-RCE escalation).
           #   4. daemon-reload + enable/restart the env-fetch oneshot (repopulates
           #      /run/ical/.env from SSM before the app restarts).
@@ -56,14 +56,14 @@ jobs:
           {
             "commands": [
               "chown -R django:www-data /var/www/django_websites/django-ical",
-              "sudo -u django bash -c 'umask 027; cd /var/www/django_websites/django-ical && git fetch --quiet && git reset --hard --quiet origin/master'",
-              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/master:deploy/django-ical-env-fetch.service > /etc/systemd/system/django-ical-env-fetch.service",
-              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/master:deploy/django-ical.service > /etc/systemd/system/django-ical.service",
-              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/master:deploy/fetch-env-from-ssm.sh > /usr/local/sbin/django-ical-env-fetch.sh && chmod 0755 /usr/local/sbin/django-ical-env-fetch.sh && chown root:root /usr/local/sbin/django-ical-env-fetch.sh",
+              "sudo -u django bash -c 'umask 027; cd /var/www/django_websites/django-ical && git fetch --quiet && git reset --hard --quiet origin/main'",
+              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/main:deploy/django-ical-env-fetch.service > /etc/systemd/system/django-ical-env-fetch.service",
+              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/main:deploy/django-ical.service > /etc/systemd/system/django-ical.service",
+              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/main:deploy/fetch-env-from-ssm.sh > /usr/local/sbin/django-ical-env-fetch.sh && chmod 0755 /usr/local/sbin/django-ical-env-fetch.sh && chown root:root /usr/local/sbin/django-ical-env-fetch.sh",
               "systemctl daemon-reload",
               "systemctl enable --quiet django-ical-env-fetch.service",
               "systemctl restart django-ical-env-fetch.service",
-              "bash -c 'set -e; git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/master:deploy/nginx/ical.foxugly.com.conf > /etc/nginx/sites-available/ical.foxugly.com.new; cp -a /etc/nginx/sites-available/ical.foxugly.com /etc/nginx/sites-available/ical.foxugly.com.deploybak; mv /etc/nginx/sites-available/ical.foxugly.com.new /etc/nginx/sites-available/ical.foxugly.com; nginx -t || { mv /etc/nginx/sites-available/ical.foxugly.com.deploybak /etc/nginx/sites-available/ical.foxugly.com; exit 1; }; systemctl reload nginx'",
+              "bash -c 'set -e; git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/main:deploy/nginx/ical.foxugly.com.conf > /etc/nginx/sites-available/ical.foxugly.com.new; cp -a /etc/nginx/sites-available/ical.foxugly.com /etc/nginx/sites-available/ical.foxugly.com.deploybak; mv /etc/nginx/sites-available/ical.foxugly.com.new /etc/nginx/sites-available/ical.foxugly.com; nginx -t || { mv /etc/nginx/sites-available/ical.foxugly.com.deploybak /etc/nginx/sites-available/ical.foxugly.com; exit 1; }; systemctl reload nginx'",
               "sudo -u django bash /var/www/django_websites/django-ical/deploy/ssm-deploy.sh",
               "chown -R django:www-data /var/www/django_websites/django-ical && chmod -R g-w,o-rwx /var/www/django_websites/django-ical"
             ],

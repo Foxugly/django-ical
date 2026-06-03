@@ -14,7 +14,7 @@ sudo usermod -aG www-data django
 # 1) Code
 sudo mkdir -p /var/www/django_websites
 sudo chown django:www-data /var/www/django_websites
-sudo -u django git clone -b master https://github.com/Foxugly/django-ical.git /var/www/django_websites/django-ical
+sudo -u django git clone -b main https://github.com/Foxugly/django-ical.git /var/www/django_websites/django-ical
 
 # 2) Setup (apt deps, venv, .env, migrate, collectstatic, systemd, nginx)
 sudo bash /var/www/django_websites/django-ical/deploy/install.sh

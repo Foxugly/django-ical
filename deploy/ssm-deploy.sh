@@ -6,7 +6,7 @@
 #   aws ssm send-command --document-name AWS-RunShellScript \
 #     --parameters 'commands=["sudo -u django bash .../deploy/ssm-deploy.sh"]'
 #
-# The git reset to origin/master and the root-side install of units / nginx /
+# The git reset to origin/main and the root-side install of units / nginx /
 # env-fetch restart already happened (earlier ordered steps in deploy.yml).
 # Here we only: refresh deps, migrate, collectstatic, restart the app service.
 set -euo pipefail
