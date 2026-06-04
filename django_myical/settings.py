@@ -40,7 +40,24 @@ MAX_UPLOAD_BYTES = env("MAX_UPLOAD_BYTES")
 EVENT_DURATION_MINUTES = env("EVENT_DURATION_MINUTES")
 SITE_TIMEZONE = env("SITE_TIMEZONE")
 
-DATABASES = {"default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")}
+# Database — fleet DB_* 6-var convention (OPERATIONS.md §3.5). Unset DB_* (dev /
+# pre-migration) → sqlite at BASE_DIR/db.sqlite3; prod uses local PostgreSQL.
+_DB_ENGINE_ALIASES = {
+    "sqlite3": "django.db.backends.sqlite3",
+    "postgresql": "django.db.backends.postgresql",
+    "postgres": "django.db.backends.postgresql",
+}
+_db_engine = env("DB_ENGINE", default="sqlite3")
+DATABASES = {
+    "default": {
+        "ENGINE": _DB_ENGINE_ALIASES.get(_db_engine, _db_engine),
+        "NAME": env("DB_NAME", default=str(BASE_DIR / "db.sqlite3")),
+        "USER": env("DB_USER", default=""),
+        "PASSWORD": env("DB_PASSWORD", default=""),
+        "HOST": env("DB_HOST", default=""),
+        "PORT": env("DB_PORT", default=""),
+    }
+}
 
 # Application definition
 
