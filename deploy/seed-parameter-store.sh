@@ -13,7 +13,7 @@ set -euo pipefail
 
 SECRET_KEYS=(
   SECRET_KEY
-  DATABASE_URL
+  DB_PASSWORD
   SENTRY_DSN
 )
 

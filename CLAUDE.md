@@ -47,4 +47,4 @@ All runtime config is in `.env` (see `.env.example`). Key env vars:
 - `MAX_UPLOAD_BYTES`, `EVENT_DURATION_MINUTES`, `SITE_TIMEZONE`
 - `HSTS_SECONDS`, `HSTS_INCLUDE_SUBDOMAINS`, `HSTS_PRELOAD`
 - `DJANGO_ENV` (environment ribbon / Sentry env), `SENTRY_DSN` (optional)
-- `DATABASE_URL` (defaults to local SQLite)
+- `DB_*` 6-var convention (`DB_ENGINE`/`DB_NAME`/`DB_USER`/`DB_PASSWORD`/`DB_HOST`/`DB_PORT`) — prod = box-local PostgreSQL (OPERATIONS.md §3.13). `DATABASE_URL` is still honoured as an override (used by the `clean_import` tooling/tests); unset → local SQLite.
