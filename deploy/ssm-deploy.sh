@@ -18,7 +18,7 @@ cd "$REPO_DIR"
 
 # Load runtime secrets so manage.py (migrate) sees DATABASE_URL / SECRET_KEY.
 # In prod there is no on-disk .env anymore — the env lives in tmpfs, written by
-# django-ical-env-fetch.service. The file is 640 django:www-data, so the django
+# ical-env-fetch.service. The file is 640 django:www-data, so the django
 # user (owner) can read it.
 if [ -r /run/ical/.env ]; then
   set -a
@@ -35,8 +35,8 @@ echo "[2/4] migrate"
 echo "[3/4] collectstatic"
 "$VENV/bin/python" manage.py collectstatic --noinput
 
-echo "[4/4] restart django-ical"
+echo "[4/4] restart ical-gunicorn"
 # Absolute /bin/systemctl so the sudoers Cmnd match is literal (usrmerge).
-sudo /bin/systemctl restart django-ical
+sudo /bin/systemctl restart ical-gunicorn
 
 echo "=== django-ical deploy complete ==="

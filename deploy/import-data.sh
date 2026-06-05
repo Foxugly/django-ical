@@ -46,7 +46,7 @@ if [ ! -d "$STAGE/media" ]; then
 fi
 
 echo "==> Stopping django-ical service"
-systemctl stop django-ical 2>/dev/null || true
+systemctl stop ical-gunicorn 2>/dev/null || true
 
 if [ -f "$INSTALL_DIR/db.sqlite3" ]; then
     BACKUP="$INSTALL_DIR/db.sqlite3.before-import-$(date +%Y%m%d-%H%M%S)"
@@ -66,8 +66,8 @@ cd "$INSTALL_DIR"
 sudo -u "$RUN_USER" "$INSTALL_DIR/.venv/bin/python" manage.py migrate --noinput
 
 echo "==> Restarting django-ical"
-systemctl start django-ical
-systemctl --no-pager --quiet is-active django-ical && echo "    django-ical active"
+systemctl start ical-gunicorn
+systemctl --no-pager --quiet is-active ical-gunicorn && echo "    django-ical active"
 
 echo
 echo "==> import-data.sh done"

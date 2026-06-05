@@ -54,4 +54,4 @@ sudo bash /var/www/django_websites/django-ical/deploy/import-data.sh /tmp/import
 
 DNS-level: revert the A record `ical.foxugly.com` to the old server IP. Effective in ≤ TTL minutes.
 
-DB-level: `import-data.sh` saves the previous `db.sqlite3` as `db.sqlite3.before-import-YYYYMMDD-HHMMSS` before overwriting. Restore with `mv` + `systemctl restart django-ical`.
+DB-level: `import-data.sh` saves the previous `db.sqlite3` as `db.sqlite3.before-import-YYYYMMDD-HHMMSS` before overwriting. Restore with `mv` + `systemctl restart ical-gunicorn`.

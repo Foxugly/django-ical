@@ -11,8 +11,8 @@
 #   sudo install -m 0440 -o root -g root deploy/sudoers.d/ical-deploy /etc/sudoers.d/ical-deploy
 
 Cmnd_Alias ICAL_SVC = \
-      /bin/systemctl restart django-ical, \
-      /bin/systemctl restart django-ical-env-fetch
+      /bin/systemctl restart ical-gunicorn, \
+      /bin/systemctl restart ical-env-fetch
 Cmnd_Alias ICAL_WEB = \
       /usr/sbin/nginx -t, \
       /bin/systemctl reload nginx

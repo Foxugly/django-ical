@@ -2,7 +2,7 @@
 #
 # django-ical — fetch env vars from SSM Parameter Store into a tmpfs .env
 #
-# Invoked at boot by django-ical-env-fetch.service. Pulls every parameter
+# Invoked at boot by ical-env-fetch.service. Pulls every parameter
 # under $PREFIX (default /ical/prod) into a fresh $OUT_FILE
 # (default /run/ical/.env), then hands ownership to the django service user.
 #

@@ -83,11 +83,11 @@ sudo -u "$RUN_USER" "$INSTALL_DIR/.venv/bin/python" manage.py migrate --noinput
 sudo -u "$RUN_USER" "$INSTALL_DIR/.venv/bin/python" manage.py collectstatic --noinput
 
 echo "==> Installing systemd unit"
-cp "$INSTALL_DIR/deploy/django-ical.service" /etc/systemd/system/django-ical.service
+cp "$INSTALL_DIR/deploy/ical-gunicorn.service" /etc/systemd/system/ical-gunicorn.service
 systemctl daemon-reload
-systemctl enable django-ical
-systemctl restart django-ical
-systemctl --no-pager --quiet is-active django-ical && echo "    django-ical active"
+systemctl enable ical-gunicorn
+systemctl restart ical-gunicorn
+systemctl --no-pager --quiet is-active ical-gunicorn && echo "    django-ical active"
 
 echo "==> Installing nginx site"
 cp "$INSTALL_DIR/deploy/nginx.conf" /etc/nginx/sites-available/django-ical

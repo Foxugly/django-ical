@@ -1,7 +1,7 @@
 [Unit]
-Description=django-ical gunicorn
-After=network.target django-ical-env-fetch.service
-Requires=django-ical-env-fetch.service
+Description=ical gunicorn
+After=network.target ical-env-fetch.service
+Requires=ical-env-fetch.service
 
 [Service]
 User=django

@@ -1,12 +1,12 @@
 [Unit]
-Description=django-ical — fetch secrets from SSM Parameter Store
+Description=ical — fetch secrets from SSM Parameter Store
 # AWS API call needs the network up and a sane clock (SigV4).
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 # Type=oneshot + RemainAfterExit=yes = boot barrier: downstream units with
-# Requires=django-ical-env-fetch.service wait for a successful exit, and the
+# Requires=ical-env-fetch.service wait for a successful exit, and the
 # unit stays "active" so the dependency edge holds for the whole boot.
 Type=oneshot
 RemainAfterExit=yes
@@ -27,10 +27,10 @@ NoNewPrivileges=yes
 RestrictSUIDSGID=yes
 
 # §3.10: runs as root, so the script must NOT live in the django-writable tree.
-# It is installed root:root 0755 at /usr/local/sbin/django-ical-env-fetch.sh by
+# It is installed root:root 0755 at /usr/local/sbin/ical-env-fetch.sh by
 # ROOT from the committed git blob (see deploy.yml) — deploy/fetch-env-from-ssm.sh
 # is the versioned source, never the execution target.
-ExecStart=/usr/local/sbin/django-ical-env-fetch.sh
+ExecStart=/usr/local/sbin/ical-env-fetch.sh
 TimeoutStartSec=120
 
 [Install]
