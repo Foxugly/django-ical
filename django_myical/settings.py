@@ -34,10 +34,9 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 SITE_DOMAIN = env("SITE_DOMAIN", default="localhost")
-# Canonical env label is STATE (fleet OPERATIONS.md §3.14); fall back to the
-# legacy DJANGO_ENV (ical only ever used it as a label, never a settings-module
-# dispatch) until the SSM rename is migrated.
-STATE = env("STATE", default="") or env("DJANGO_ENV", default="DEV")
+# Environment label (fleet OPERATIONS.md §3.14). ical only ever used this as a
+# label, never a settings-module dispatch.
+STATE = env("STATE", default="DEV")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 MAX_UPLOAD_BYTES = env("MAX_UPLOAD_BYTES")
 EVENT_DURATION_MINUTES = env("EVENT_DURATION_MINUTES")
