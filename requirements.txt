@@ -14,8 +14,6 @@ django==5.2.13
     #   django-widget-tweaks
 django-environ==0.13.0
     # via -r requirements.in
-psycopg[binary]>=3.2,<4
-    # via -r requirements.in  (PostgreSQL driver; re-run pip-compile to pin)
 django-widget-tweaks==1.5.1
     # via -r requirements.in
 gunicorn==25.3.0
@@ -24,6 +22,10 @@ icalendar==6.3.2
     # via -r requirements.in
 packaging==26.2
     # via gunicorn
+psycopg[binary]==3.3.4
+    # via -r requirements.in
+psycopg-binary==3.3.4
+    # via psycopg
 python-dateutil==2.9.0.post0
     # via icalendar
 sentry-sdk==2.58.0
@@ -33,10 +35,8 @@ six==1.17.0
 sqlparse==0.5.5
     # via django
 tzdata==2026.2
-    # via
-    #   django
-    #   icalendar
-urllib3==2.6.3
+    # via icalendar
+urllib3==2.7.0
     # via sentry-sdk
 whitenoise==6.12.0
     # via -r requirements.in
