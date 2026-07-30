@@ -8,6 +8,27 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # La suite tournait sur SQLite alors que la production tourne sur
+    # PostgreSQL 16 (DB_ENGINE=postgresql sur la box). SQLite est plus permissif
+    # et laisse passer des requetes que PostgreSQL refuse — c'est ainsi que deux
+    # endpoints casses ont vecu en production sur QuizOnline. On teste donc sur
+    # le moteur de production. `DATABASE_URL` reste prioritaire dans settings.py,
+    # donc les tests clean_import qui pointent un fichier SQLite precis sont
+    # inchanges.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ical
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v7
 
@@ -33,4 +54,11 @@ jobs:
           ALLOWED_HOSTS: testserver,localhost
           SITE_DOMAIN: localhost
           CSRF_TRUSTED_ORIGINS: http://localhost
+          # Convention DB_* 6 variables de la flotte (OPERATIONS.md §3.5).
+          DB_ENGINE: postgresql
+          DB_NAME: ical
+          DB_HOST: localhost
+          DB_PORT: "5432"
+          DB_USER: postgres
+          DB_PASSWORD: postgres
         run: pytest -v
