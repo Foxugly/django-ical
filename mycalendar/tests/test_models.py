@@ -5,11 +5,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from mycalendar.models import MyCalendar
 
-
 CSV_BYTES = (
-    "31/12/2021;21.30;RBP;SCC;Av Des Vaillants 2;\n"
-    "2022-01-15;09:00;Solo;;;\n"
-).encode("utf-8")
+    b"31/12/2021;21.30;RBP;SCC;Av Des Vaillants 2;\n"
+    b"2022-01-15;09:00;Solo;;;\n"
+)
 
 
 @pytest.mark.django_db

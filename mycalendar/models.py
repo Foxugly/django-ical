@@ -11,7 +11,6 @@ from django.utils.translation import gettext_lazy as _
 from mycalendar.services.ics import build_calendar
 from mycalendar.validators import validate_csv_upload
 
-
 logger = logging.getLogger(__name__)
 
 

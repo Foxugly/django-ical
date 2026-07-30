@@ -2,11 +2,9 @@
 import hashlib
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Optional
 from zoneinfo import ZoneInfo
 
 from icalendar import Calendar, Event, vText
-
 
 DEFAULT_EVENT_DURATION = timedelta(hours=1, minutes=30)
 
@@ -15,7 +13,7 @@ DEFAULT_EVENT_DURATION = timedelta(hours=1, minutes=30)
 class ParsedEvent:
     summary: str
     start: datetime
-    location: Optional[str]
+    location: str | None
     uid: str
     duration: timedelta = DEFAULT_EVENT_DURATION
 
@@ -41,7 +39,7 @@ def _parse_time(token: str) -> tuple[int, int]:
     return int(hour), int(minute)
 
 
-def parse_row(row: str, *, tz: ZoneInfo, event_duration: timedelta = DEFAULT_EVENT_DURATION) -> Optional[ParsedEvent]:
+def parse_row(row: str, *, tz: ZoneInfo, event_duration: timedelta = DEFAULT_EVENT_DURATION) -> ParsedEvent | None:
     fields = [f.strip() for f in row.rstrip("\r\n").split(";")]
     if len(fields) < 3:
         return None
@@ -54,11 +52,11 @@ def parse_row(row: str, *, tz: ZoneInfo, event_duration: timedelta = DEFAULT_EVE
     away = fields[3] if len(fields) > 3 else ""
     summary = f"{home}-{away}" if len(away) >= 2 else home
 
-    location: Optional[str] = None
+    location: str | None = None
     if len(fields) > 4 and len(fields[4]) > 5:
         location = fields[4]
 
-    uid = hashlib.sha224(f"{fields[0]}{summary}".encode("utf-8")).hexdigest()
+    uid = hashlib.sha224(f"{fields[0]}{summary}".encode()).hexdigest()
     return ParsedEvent(summary=summary, start=start, location=location, uid=uid, duration=event_duration)
 
 
