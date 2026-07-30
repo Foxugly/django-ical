@@ -18,7 +18,7 @@ django-widget-tweaks==1.5.1
     # via -r requirements.in
 gunicorn==25.3.0
     # via -r requirements.in
-icalendar==6.3.2
+icalendar==7.2.2
     # via -r requirements.in
 packaging==26.2
     # via gunicorn
