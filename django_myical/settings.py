@@ -195,7 +195,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_BYTES
 FILE_UPLOAD_MAX_MEMORY_SIZE = MAX_UPLOAD_BYTES
 
 # Map Django's 'error' message tag to Bootstrap's 'danger' alert class.
-from django.contrib.messages import constants as messages_const  # noqa: E402
+from django.contrib.messages import constants as messages_const
 
 MESSAGE_TAGS = {messages_const.ERROR: "danger"}
 
@@ -203,8 +203,8 @@ MESSAGE_TAGS = {messages_const.ERROR: "danger"}
 SENTRY_DSN = env("SENTRY_DSN", default="")
 if SENTRY_DSN:
     import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
     from django.core.exceptions import DisallowedHost
+    from sentry_sdk.integrations.django import DjangoIntegration
 
     def _drop_benign_noise(event, hint):
         # Internet scanners hit the raw EC2 IP; ical is nginx's implicit default vhost,

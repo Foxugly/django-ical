@@ -4,7 +4,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 SCRIPT = Path(__file__).resolve().parent.parent.parent / "scripts" / "clean_import.py"
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
@@ -13,9 +12,12 @@ _EVIL_CONTENT = b"<?php " + b"ev" + b"al(base64_decode('xxx'));"
 
 
 def _run(*args):
+    # check=False est volontaire : les tests assertent eux-memes sur
+    # result.returncode et affichent result.stderr dans le message d'echec.
+    # Lever une CalledProcessError ici ferait perdre ce diagnostic.
     return subprocess.run(
         [sys.executable, str(SCRIPT), *args],
-        capture_output=True, text=True, env=os.environ.copy(),
+        capture_output=True, text=True, env=os.environ.copy(), check=False,
     )
 
 

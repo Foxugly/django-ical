@@ -1,0 +1,28 @@
+# Configuration ruff — introduite le 2026-07-30.
+#
+# Jusqu'ici le depot n'en avait aucune : `ruff check .` tournait sur les
+# reglages par defaut. La montee 0.15 -> 0.16 (PR Dependabot #10) a active de
+# nouvelles regles et fait echouer la CI sur du code preexistant.
+#
+# Les corrections de fond ont ete appliquees au code. Ne reste ici que ce qui
+# doit etre exclu par nature.
+
+[lint.per-file-ignores]
+# Les migrations Django sont du code GENERE. `dependencies` et `operations` y
+# sont des attributs de classe mutables, ce que RUF012 signale a juste titre en
+# general — mais les annoter en ClassVar serait ecrase a la prochaine
+# regeneration par makemigrations, et on ne relit pas une migration appliquee.
+"**/migrations/*.py" = ["RUF012"]
+
+# E402 (import pas en tete de fichier) est ici VOLONTAIRE, et l'exclusion vaut
+# mieux qu'un `# noqa` : ruff 0.16 considere ces noqa comme inutiles (RUF100) et
+# les supprime, ce qui refait echouer ruff 0.15 sur E402. Une regle qui satisfait
+# une version en cassant l'autre n'est pas un correctif.
+#
+# clean_import.py : les imports django DOIVENT suivre l'insertion du project
+# root dans sys.path, sinon le script ne trouve pas les paquets quand il est
+# lance directement. Contrainte, pas style.
+"scripts/clean_import.py" = ["E402"]
+# settings.py : import place au plus pres de son usage (MESSAGE_TAGS), idiome
+# courant des reglages Django.
+"django_myical/settings.py" = ["E402"]

@@ -6,7 +6,6 @@ from icalendar import Calendar
 
 from mycalendar.services.ics import build_calendar, parse_row
 
-
 BRUSSELS = ZoneInfo("Europe/Brussels")
 
 
