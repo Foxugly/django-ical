@@ -12,7 +12,7 @@ django==5.2.15
     # via
     #   -r requirements.in
     #   django-widget-tweaks
-django-environ==0.13.0
+django-environ==0.14.0
     # via -r requirements.in
 django-widget-tweaks==1.5.1
     # via -r requirements.in
@@ -34,7 +34,7 @@ psycopg-binary==3.3.4
     # via psycopg
 pygments==2.20.0
     # via pytest
-pytest==9.0.3
+pytest==9.1.1
     # via
     #   -r requirements-dev.in
     #   pytest-django
@@ -42,9 +42,9 @@ pytest-django==4.12.0
     # via -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via icalendar
-ruff==0.15.12
+ruff==0.16.0
     # via -r requirements-dev.in
-sentry-sdk==2.58.0
+sentry-sdk==2.66.1
     # via -r requirements.in
 six==1.17.0
     # via python-dateutil
