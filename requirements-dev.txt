@@ -16,7 +16,7 @@ django-environ==0.13.0
     # via -r requirements.in
 django-widget-tweaks==1.5.1
     # via -r requirements.in
-gunicorn==25.3.0
+gunicorn==26.0.0
     # via -r requirements.in
 icalendar==6.3.2
     # via -r requirements.in
