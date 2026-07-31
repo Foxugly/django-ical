@@ -199,9 +199,19 @@ from django.contrib.messages import constants as messages_const
 
 MESSAGE_TAGS = {messages_const.ERROR: "danger"}
 
-# Sentry — optional. Set SENTRY_DSN to enable.
+# Sentry — actif uniquement en production.
+#
+# La garde etait `if SENTRY_DSN:` seul : n'importe quel `manage.py` lance avec un
+# DSN dans l'environnement — un poste de developpement, par exemple — envoyait
+# dans le projet Sentry DE PRODUCTION. Constate sur pushit le 2026-07-31.
+#
+# On exige donc que l'environnement resolu soit lui-meme un marqueur de
+# production, ce qui rend impossible l'emission d'un evenement etiquete
+# autrement. Production inchangee : STATE=PROD est pose dans /run/ical/.env.
 SENTRY_DSN = env("SENTRY_DSN", default="")
-if SENTRY_DSN:
+SENTRY_ENVIRONMENT = env("SENTRY_ENVIRONMENT", default="") or STATE
+_SENTRY_ENV_IS_PROD = SENTRY_ENVIRONMENT.strip().upper() in {"PROD", "PRODUCTION"}
+if SENTRY_DSN and _SENTRY_ENV_IS_PROD:
     import sentry_sdk
     from django.core.exceptions import DisallowedHost
     from sentry_sdk.integrations.django import DjangoIntegration
@@ -220,7 +230,7 @@ if SENTRY_DSN:
     sentry_sdk.init(
         dsn=SENTRY_DSN,
         integrations=[DjangoIntegration()],
-        environment=env("SENTRY_ENVIRONMENT", default="") or STATE,
+        environment=SENTRY_ENVIRONMENT,
         traces_sample_rate=0.1,
         send_default_pii=False,
         before_send=_drop_benign_noise,
