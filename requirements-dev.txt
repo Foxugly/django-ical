@@ -42,7 +42,7 @@ pytest-django==4.12.0
     # via -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via icalendar
-ruff==0.16.0
+ruff==0.16.1
     # via -r requirements-dev.in
 sentry-sdk==2.66.1
     # via -r requirements.in
