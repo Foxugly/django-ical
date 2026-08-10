@@ -8,7 +8,7 @@ asgiref==3.11.1
     # via django
 certifi==2026.4.22
     # via sentry-sdk
-django==5.2.16
+django==5.2.17
     # via
     #   -r requirements.in
     #   django-widget-tweaks
@@ -38,11 +38,11 @@ pytest==9.1.1
     # via
     #   -r requirements-dev.in
     #   pytest-django
-pytest-django==4.12.0
+pytest-django==4.13.0
     # via -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via icalendar
-ruff==0.16.0
+ruff==0.16.1
     # via -r requirements-dev.in
 sentry-sdk==2.66.1
     # via -r requirements.in
