@@ -8,7 +8,7 @@ asgiref==3.11.1
     # via django
 certifi==2026.4.22
     # via sentry-sdk
-django==5.2.16
+django==5.2.17
     # via
     #   -r requirements.in
     #   django-widget-tweaks
@@ -36,7 +36,7 @@ sqlparse==0.6.0
     # via django
 tzdata==2026.2
     # via icalendar
-urllib3==2.7.0
+urllib3==2.8.0
     # via sentry-sdk
 whitenoise==6.12.0
     # via -r requirements.in
