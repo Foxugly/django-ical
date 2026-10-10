@@ -13,6 +13,15 @@ WorkingDirectory=/var/www/django_websites/django-ical
 # Secrets now come from SSM via the env-fetch oneshot (tmpfs), not an on-disk .env.
 EnvironmentFile=/run/ical/.env
 ExecStart=/var/www/django_websites/django-ical/.venv/bin/gunicorn django_myical.wsgi:application -c deploy/gunicorn.conf.py
+# Hardening (OPERATIONS.md §3.22): no privilege escalation, private /tmp, read-only
+# system (/usr, /boot, /etc). Never ProtectSystem=strict: /var/www (media, beat schedule)
+# must stay writable.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
 Restart=on-failure
 RestartSec=3
 
