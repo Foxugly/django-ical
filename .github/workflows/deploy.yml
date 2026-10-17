@@ -13,6 +13,12 @@ permissions:
   id-token: write    # required for OIDC token minting
   contents: read
 
+# One production deploy at a time: back-to-back merges (e.g. Dependabot
+# auto-merge) queue instead of deploying over each other.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 jobs:
   deploy:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
