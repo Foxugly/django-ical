@@ -4,5 +4,5 @@ django-widget-tweaks>=1.5
 django-environ>=0.14.0
 whitenoise>=6.6
 gunicorn>=22.0
-sentry-sdk>=2.71.0
+sentry-sdk>=2.72.0
 psycopg[binary]>=3.3.6,<4

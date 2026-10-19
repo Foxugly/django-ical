@@ -28,7 +28,7 @@ psycopg-binary==3.3.6
     # via psycopg
 python-dateutil==2.9.0.post0
     # via icalendar
-sentry-sdk==2.71.0
+sentry-sdk==2.72.0
     # via -r requirements.in
 six==1.17.0
     # via python-dateutil
