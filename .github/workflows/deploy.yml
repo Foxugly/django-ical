@@ -61,10 +61,12 @@ jobs:
           #   7. FINAL idempotent normalization (root, after everything that writes the
           #      tree): chown then chmod -R g-w,o-rwx -> 750 dirs / 640 files, group
           #      www-data, no other-access, no group-write. g-w,o-rwx preserves +x.
+          #      chown -h never follows a symlink django may have planted; the chmod
+          #      runs AS DJANGO (root never writes through a django tree, §3.10).
           cat > /tmp/ssm-params.json <<'EOF'
           {
             "commands": [
-              "chown -R django:www-data /var/www/django_websites/django-ical",
+              "chown -R -h django:www-data /var/www/django_websites/django-ical",
               "sudo -u django bash -c 'umask 027; cd /var/www/django_websites/django-ical && git fetch --quiet && git reset --hard --quiet origin/main'",
               "export SHA=${{ github.event.workflow_run.head_sha || github.sha }}",
               "export M=/var/lib/fleet-deploy/django-ical.git",
@@ -79,7 +81,7 @@ jobs:
               "systemctl restart ical-env-fetch.service",
               "bash -c 'set -e; git --git-dir=$M show $SHA:deploy/nginx/ical.foxugly.com.conf > /etc/nginx/sites-available/ical.foxugly.com.new; cp -a /etc/nginx/sites-available/ical.foxugly.com /etc/nginx/sites-available/ical.foxugly.com.deploybak; mv /etc/nginx/sites-available/ical.foxugly.com.new /etc/nginx/sites-available/ical.foxugly.com; nginx -t || { mv /etc/nginx/sites-available/ical.foxugly.com.deploybak /etc/nginx/sites-available/ical.foxugly.com; exit 1; }; systemctl reload nginx'",
               "sudo -u django bash /var/www/django_websites/django-ical/deploy/ssm-deploy.sh",
-              "chown -R django:www-data /var/www/django_websites/django-ical && chmod -R g-w,o-rwx /var/www/django_websites/django-ical"
+              "chown -R -h django:www-data /var/www/django_websites/django-ical && sudo -u django chmod -R g-w,o-rwx /var/www/django_websites/django-ical"
             ],
             "executionTimeout": ["900"]
           }
