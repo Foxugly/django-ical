@@ -46,8 +46,11 @@ jobs:
           #      makes every file git recreates be 640/750 (group www-data), killing
           #      the per-deploy world-readable (644) permission drift at the source.
           #   3. as ROOT: install both systemd units straight from the COMMITTED git
-          #      blob at origin/main — never from the django-writable working tree
-          #      (closes the cp-unit -> root-RCE escalation).
+          #      blob — never from the django-writable working tree
+          #      (closes the cp-unit -> root-RCE escalation). The blob is read from
+          #      ROOT'S OWN bare mirror (/var/lib/fleet-deploy, root:root 700) fetched
+          #      from GitHub at the deployed SHA, never from the django-owned .git
+          #      (refs/config/hooks there are django-writable).
           #   4. daemon-reload + enable/restart the env-fetch oneshot (repopulates
           #      /run/ical/.env from SSM before the app restarts).
           #   5. as ROOT: install the nginx site config from the COMMITTED git blob,
@@ -63,13 +66,18 @@ jobs:
             "commands": [
               "chown -R django:www-data /var/www/django_websites/django-ical",
               "sudo -u django bash -c 'umask 027; cd /var/www/django_websites/django-ical && git fetch --quiet && git reset --hard --quiet origin/main'",
-              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/main:deploy/ical-env-fetch.service > /etc/systemd/system/ical-env-fetch.service",
-              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/main:deploy/ical-gunicorn.service > /etc/systemd/system/ical-gunicorn.service",
-              "git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/main:deploy/fetch-env-from-ssm.sh > /usr/local/sbin/ical-env-fetch.sh && chmod 0755 /usr/local/sbin/ical-env-fetch.sh && chown root:root /usr/local/sbin/ical-env-fetch.sh",
+              "export SHA=${{ github.event.workflow_run.head_sha || github.sha }}",
+              "export M=/var/lib/fleet-deploy/django-ical.git",
+              "install -d -m 700 -o root -g root /var/lib/fleet-deploy",
+              "[ -d $M ] || git init --quiet --bare $M",
+              "git --git-dir=$M fetch --quiet --depth=1 https://github.com/Foxugly/django-ical.git $SHA && git --git-dir=$M cat-file -e $SHA^{commit} || exit 1",
+              "git --git-dir=$M show $SHA:deploy/ical-env-fetch.service > /etc/systemd/system/ical-env-fetch.service",
+              "git --git-dir=$M show $SHA:deploy/ical-gunicorn.service > /etc/systemd/system/ical-gunicorn.service",
+              "git --git-dir=$M show $SHA:deploy/fetch-env-from-ssm.sh > /usr/local/sbin/ical-env-fetch.sh && chmod 0755 /usr/local/sbin/ical-env-fetch.sh && chown root:root /usr/local/sbin/ical-env-fetch.sh",
               "systemctl daemon-reload",
               "systemctl enable --quiet ical-env-fetch.service",
               "systemctl restart ical-env-fetch.service",
-              "bash -c 'set -e; git -C /var/www/django_websites/django-ical -c safe.directory=/var/www/django_websites/django-ical show origin/main:deploy/nginx/ical.foxugly.com.conf > /etc/nginx/sites-available/ical.foxugly.com.new; cp -a /etc/nginx/sites-available/ical.foxugly.com /etc/nginx/sites-available/ical.foxugly.com.deploybak; mv /etc/nginx/sites-available/ical.foxugly.com.new /etc/nginx/sites-available/ical.foxugly.com; nginx -t || { mv /etc/nginx/sites-available/ical.foxugly.com.deploybak /etc/nginx/sites-available/ical.foxugly.com; exit 1; }; systemctl reload nginx'",
+              "bash -c 'set -e; git --git-dir=$M show $SHA:deploy/nginx/ical.foxugly.com.conf > /etc/nginx/sites-available/ical.foxugly.com.new; cp -a /etc/nginx/sites-available/ical.foxugly.com /etc/nginx/sites-available/ical.foxugly.com.deploybak; mv /etc/nginx/sites-available/ical.foxugly.com.new /etc/nginx/sites-available/ical.foxugly.com; nginx -t || { mv /etc/nginx/sites-available/ical.foxugly.com.deploybak /etc/nginx/sites-available/ical.foxugly.com; exit 1; }; systemctl reload nginx'",
               "sudo -u django bash /var/www/django_websites/django-ical/deploy/ssm-deploy.sh",
               "chown -R django:www-data /var/www/django_websites/django-ical && chmod -R g-w,o-rwx /var/www/django_websites/django-ical"
             ],
