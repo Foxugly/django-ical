@@ -3,6 +3,11 @@
 # Run after `git clone -b main https://github.com/Foxugly/django-ical.git $INSTALL_DIR`.
 # Re-run after `git pull` to apply updates.
 # Run as root: sudo bash deploy/install.sh
+#
+# §3.10 / §3.11: the systemd unit and nginx vhost are read from ROOT'S OWN bare
+# mirror (/var/lib/fleet-deploy/django-ical.git, root:root 700) fetched from
+# GitHub at main — never from $INSTALL_DIR, which django owns and could rewrite
+# before root copies it.
 set -euo pipefail
 
 INSTALL_DIR=/var/www/django_websites/django-ical
@@ -36,7 +41,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
     nginx certbot python3-certbot-nginx
 
 echo "==> Setting ownership on $INSTALL_DIR"
-chown -R "$RUN_USER:$RUN_GROUP" "$INSTALL_DIR"
+chown -R -h "$RUN_USER:$RUN_GROUP" "$INSTALL_DIR"
 
 echo "==> Creating venv at $INSTALL_DIR/.venv"
 if [ ! -d "$INSTALL_DIR/.venv" ]; then
@@ -82,15 +87,22 @@ cd "$INSTALL_DIR"
 sudo -u "$RUN_USER" "$INSTALL_DIR/.venv/bin/python" manage.py migrate --noinput
 sudo -u "$RUN_USER" "$INSTALL_DIR/.venv/bin/python" manage.py collectstatic --noinput
 
+echo "==> Fetching root's mirror (source of every root-installed file)"
+MIRROR=/var/lib/fleet-deploy/django-ical.git
+install -d -m 700 -o root -g root /var/lib/fleet-deploy
+[ -d "$MIRROR" ] || git init --quiet --bare "$MIRROR"
+git --git-dir="$MIRROR" fetch --quiet --depth=1 https://github.com/Foxugly/django-ical.git main
+SHA=$(git --git-dir="$MIRROR" rev-parse FETCH_HEAD)
+
 echo "==> Installing systemd unit"
-cp "$INSTALL_DIR/deploy/ical-gunicorn.service" /etc/systemd/system/ical-gunicorn.service
+git --git-dir="$MIRROR" show "$SHA:deploy/ical-gunicorn.service" > /etc/systemd/system/ical-gunicorn.service
 systemctl daemon-reload
 systemctl enable ical-gunicorn
 systemctl restart ical-gunicorn
 systemctl --no-pager --quiet is-active ical-gunicorn && echo "    django-ical active"
 
 echo "==> Installing nginx site"
-cp "$INSTALL_DIR/deploy/nginx.conf" /etc/nginx/sites-available/django-ical
+git --git-dir="$MIRROR" show "$SHA:deploy/nginx.conf" > /etc/nginx/sites-available/django-ical
 ln -sf /etc/nginx/sites-available/django-ical /etc/nginx/sites-enabled/django-ical
 nginx -t
 systemctl reload nginx
