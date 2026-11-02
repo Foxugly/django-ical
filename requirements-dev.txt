@@ -34,7 +34,7 @@ psycopg-binary==3.3.6
     # via psycopg
 pygments==2.20.0
     # via pytest
-pytest==9.1.1
+pytest==9.2.0
     # via
     #   -r requirements-dev.in
     #   pytest-django
@@ -42,7 +42,7 @@ pytest-django==4.14.0
     # via -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via icalendar
-ruff==0.17.2
+ruff==0.17.3
     # via -r requirements-dev.in
 sentry-sdk==2.73.0
     # via -r requirements.in
