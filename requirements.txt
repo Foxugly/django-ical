@@ -8,7 +8,7 @@ asgiref==3.11.1
     # via django
 certifi==2026.10.23
     # via sentry-sdk
-django==5.2.18
+django==5.2.19
     # via
     #   -r requirements.in
     #   django-widget-tweaks
@@ -22,13 +22,13 @@ icalendar==6.3.2
     # via -r requirements.in
 packaging==26.2
     # via gunicorn
-psycopg[binary]==3.3.6
+psycopg[binary]==3.3.8
     # via -r requirements.in
-psycopg-binary==3.3.6
+psycopg-binary==3.3.8
     # via psycopg
 python-dateutil==2.9.0.post0
     # via icalendar
-sentry-sdk==2.73.0
+sentry-sdk==2.74.0
     # via -r requirements.in
 six==1.17.0
     # via python-dateutil
