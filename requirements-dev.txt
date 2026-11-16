@@ -28,9 +28,9 @@ packaging==26.2
     #   pytest
 pluggy==1.6.0
     # via pytest
-psycopg[binary]==3.3.8
+psycopg[binary]==3.3.9
     # via -r requirements.in
-psycopg-binary==3.3.8
+psycopg-binary==3.3.9
     # via psycopg
 pygments==2.20.0
     # via pytest
@@ -42,9 +42,9 @@ pytest-django==4.14.0
     # via -r requirements-dev.in
 python-dateutil==2.9.0.post0
     # via icalendar
-ruff==0.17.4
+ruff==0.17.5
     # via -r requirements-dev.in
-sentry-sdk==2.74.0
+sentry-sdk==2.75.0
     # via -r requirements.in
 six==1.17.0
     # via python-dateutil
