@@ -22,13 +22,13 @@ icalendar==6.3.2
     # via -r requirements.in
 packaging==26.2
     # via gunicorn
-psycopg[binary]==3.3.8
+psycopg[binary]==3.3.9
     # via -r requirements.in
-psycopg-binary==3.3.8
+psycopg-binary==3.3.9
     # via psycopg
 python-dateutil==2.9.0.post0
     # via icalendar
-sentry-sdk==2.74.0
+sentry-sdk==2.75.0
     # via -r requirements.in
 six==1.17.0
     # via python-dateutil
