@@ -70,19 +70,13 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
-    # admin.site with mandatory TOTP 2FA (admin_2fa/, CLAUDE.md "Admin 2FA"):
-    # replaces 'django.contrib.admin', same app label.
-    'admin_2fa.apps.OTPAdminConfig',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
-    'django_otp',
-    'django_otp.plugins.otp_totp',
-    'django_otp.plugins.otp_static',
-    'admin_2fa',
     'mycalendar'
 ]
 
@@ -94,9 +88,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # Binds the session's verified OTP device to request.user (admin 2FA).
-    # Right after AuthenticationMiddleware; the public pages are untouched.
-    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -135,12 +126,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
-
-# --- Admin 2FA (django-otp). Label shown in the authenticator app. Throttling
-# stays on (factor 1 = 1 s, 2 s, 4 s... after each wrong code, per device). ---
-OTP_TOTP_ISSUER = "iCal admin (ical.foxugly.com)"
-OTP_TOTP_THROTTLE_FACTOR = 1
-OTP_STATIC_THROTTLE_FACTOR = 1
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
