@@ -232,8 +232,9 @@ jobs:
               "systemctl enable --quiet ical-env-fetch.service",
               "systemctl restart ical-env-fetch.service",
               "bash -c 'set -e; git --git-dir=$M show $SHA:deploy/nginx/ical.foxugly.com.conf > /etc/nginx/sites-available/ical.foxugly.com.new; cp -a /etc/nginx/sites-available/ical.foxugly.com /etc/nginx/sites-available/ical.foxugly.com.deploybak; mv /etc/nginx/sites-available/ical.foxugly.com.new /etc/nginx/sites-available/ical.foxugly.com; nginx -t || { mv /etc/nginx/sites-available/ical.foxugly.com.deploybak /etc/nginx/sites-available/ical.foxugly.com; exit 1; }; systemctl reload nginx'",
-              "sudo -u django bash /var/www/django_websites/django-ical/deploy/ssm-deploy.sh",
-              "chown -R -h django:www-data /var/www/django_websites/django-ical && sudo -u django chmod -R g-w,o-rwx /var/www/django_websites/django-ical"
+              "sudo -u django bash /var/www/django_websites/django-ical/deploy/ssm-deploy.sh; DEPLOY_RC=$?",
+              "chown -R -h django:www-data /var/www/django_websites/django-ical && sudo -u django chmod -R g-w,o-rwx /var/www/django_websites/django-ical",
+              "[ $DEPLOY_RC -eq 0 ] || { echo \"deploy: ssm-deploy.sh a echoue (code $DEPLOY_RC)\" >&2; exit $DEPLOY_RC; }"
             ],
             "executionTimeout": ["900"]
           }

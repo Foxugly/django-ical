@@ -20,10 +20,14 @@ cd "$REPO_DIR"
 # In prod there is no on-disk .env anymore — the env lives in tmpfs, written by
 # ical-env-fetch.service. The file is 640 django:www-data, so the django
 # user (owner) can read it.
+# Read as KEY=VALUE lines, like systemd's EnvironmentFile, never executed as shell:
+# a value with ( ) ; $ or spaces (SECRET_KEY) made `. /run/ical/.env` abort the
+# script before pip install (deploys then silently kept the old dependencies).
 if [ -r /run/ical/.env ]; then
-  set -a
-  . /run/ical/.env
-  set +a
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in ''|'#'*) continue ;; esac
+    if [[ "$line" == [A-Za-z_]*=* ]]; then export "$line"; fi
+  done < /run/ical/.env
 fi
 
 echo "[1/4] pip install"
