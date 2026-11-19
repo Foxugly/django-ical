@@ -28,7 +28,7 @@ RestrictSUIDSGID=yes
 
 # §3.10: runs as root, so the script must NOT live in the django-writable tree.
 # It is installed root:root 0755 at /usr/local/sbin/ical-env-fetch.sh by
-# ROOT from the committed git blob (see deploy.yml) — deploy/fetch-env-from-ssm.sh
+# ROOT from the committed git blob (see the deploy job in .github/workflows/ci.yml) — deploy/fetch-env-from-ssm.sh
 # is the versioned source, never the execution target.
 ExecStart=/usr/local/sbin/ical-env-fetch.sh
 TimeoutStartSec=120

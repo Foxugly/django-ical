@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.urls import path, reverse
 from django.utils import translation
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import check_for_language
 
 from django_myical.health import health
@@ -15,7 +16,14 @@ def set_lang(request):
         return HttpResponseRedirect(reverse("home"))
     user_language = request.GET["lang"]
     translation.activate(user_language)
-    next_url = request.GET.get("next") or reverse("home")
+    next_url = request.GET.get("next")
+    # Only same-site targets: an external `next` would turn /lang/ into an open redirect.
+    if not next_url or not url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = reverse("home")
     response = HttpResponseRedirect(next_url)
     response.set_cookie(
         settings.LANGUAGE_COOKIE_NAME,

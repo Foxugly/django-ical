@@ -7,7 +7,7 @@
 #     --parameters 'commands=["sudo -u django bash .../deploy/ssm-deploy.sh"]'
 #
 # The git reset to origin/main and the root-side install of units / nginx /
-# env-fetch restart already happened (earlier ordered steps in deploy.yml).
+# env-fetch restart already happened (earlier ordered steps of the deploy job in ci.yml).
 # Here we only: refresh deps, migrate, collectstatic, restart the app service.
 set -euo pipefail
 umask 027
