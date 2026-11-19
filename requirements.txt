@@ -11,8 +11,11 @@ certifi==2026.10.23
 django==5.2.19
     # via
     #   -r requirements.in
+    #   django-otp
     #   django-widget-tweaks
 django-environ==0.14.0
+    # via -r requirements.in
+django-otp==1.7.5
     # via -r requirements.in
 django-widget-tweaks==1.5.1
     # via -r requirements.in
@@ -28,6 +31,8 @@ psycopg-binary==3.3.9
     # via psycopg
 python-dateutil==2.9.0.post0
     # via icalendar
+qrcode==8.2
+    # via -r requirements.in
 sentry-sdk==2.75.0
     # via -r requirements.in
 six==1.17.0
