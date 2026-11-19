@@ -9,7 +9,7 @@ from django.urls import reverse
         "//example.org/",
         "http://example.org/path",
         "javascript:alert(1)",
-        "/\example.org",
+        r"/\example.org",
     ],
 )
 def test_set_lang_rejects_external_next(client, next_url):
