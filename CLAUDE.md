@@ -48,3 +48,34 @@ All runtime config is in `.env` (see `.env.example`). Key env vars:
 - `HSTS_SECONDS`, `HSTS_INCLUDE_SUBDOMAINS`, `HSTS_PRELOAD`
 - `DJANGO_ENV` (environment ribbon / Sentry env), `SENTRY_DSN` (optional)
 - `DB_*` 6-var convention (`DB_ENGINE`/`DB_NAME`/`DB_USER`/`DB_PASSWORD`/`DB_HOST`/`DB_PORT`) — prod = box-local PostgreSQL (OPERATIONS.md §3.13). `DATABASE_URL` is still honoured as an override (used by the `clean_import` tooling/tests); unset → local SQLite.
+
+## Admin 2FA
+
+`/admin/` requires a TOTP second factor for **every** staff account (django-otp 1.7.5 + qrcode 8.2,
+app `admin_2fa/`, ported from the fleet reference Poker_server). The public pages (`/`, `/lang/`,
+`/health/`) see nothing of it.
+
+- **Wiring**: `"admin_2fa.apps.OTPAdminConfig"` *replaces* `"django.contrib.admin"` (it makes
+  `admin.site` an `Admin2FASite`, whose `has_permission` also needs `user.is_verified()`); plus
+  `django_otp`, `otp_totp`, `otp_static`, `admin_2fa` in INSTALLED_APPS and
+  `django_otp.middleware.OTPMiddleware` right after `AuthenticationMiddleware`. `OTP_TOTP_ISSUER` is
+  the label in the authenticator app. A missing piece fails `manage.py check` (`admin_2fa.E001-E004`).
+  A custom `AdminSite` subclass must inherit `admin_2fa.sites.Admin2FASite`.
+- **Flow**: password on `/admin/login/` -> `/admin/2fa/setup/` (first time: QR code + key, confirm one
+  code, 10 single-use backup codes shown **once**) or `/admin/2fa/verify/` (TOTP code or a backup
+  code). Server-rendered admin templates, CSRF, `never_cache`, no inline script/style.
+- **Brute force**: django-otp throttles each device (1 s, 2 s, 4 s... after each wrong code) and nginx
+  puts `/admin/2fa/` in the same `ical_admin_login` zone as the login (10 r/min per IP).
+- **Lost phone / locked out** (on the box, as `ical-gunicorn` would run it):
+
+  ```bash
+  sudo systemd-run --wait --pipe --quiet --uid=django --gid=www-data \
+    -p EnvironmentFile=/run/ical/.env -p WorkingDirectory=/var/www/django_websites/django-ical \
+    /var/www/django_websites/django-ical/.venv/bin/python manage.py admin_2fa_reset <username>
+  ```
+
+  deletes the user's devices (re-enrolment at the next admin login); `--unlock` only clears the delay.
+- **Tests on admin pages**: use `admin_2fa.testing.force_admin_login(client, user)`, not
+  `client.force_login` (the admin would redirect to the second factor).
+- **Secrets**: never log or send to Sentry the TOTP key, the QR code or a backup code -- the views keep
+  them in `Redacted` wrappers and the form field is named `token` (scrubbed by Sentry).
