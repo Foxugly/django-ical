@@ -8,7 +8,9 @@ asgiref==3.11.1
     # via django
 certifi==2026.10.23
     # via sentry-sdk
-django==5.2.19
+    #   pytest
+    #   qrcode
+django==6.1.3
     # via
     #   -r requirements.in
     #   django-otp
@@ -19,16 +21,14 @@ django-otp==1.7.5
     # via -r requirements.in
 django-widget-tweaks==1.5.1
     # via -r requirements.in
-gunicorn==25.3.0
+gunicorn==27.0.1
     # via -r requirements.in
-icalendar==6.3.2
+icalendar==7.3.0
     # via -r requirements.in
 iniconfig==2.3.0
     # via pytest
 packaging==26.2
-    # via
-    #   gunicorn
-    #   pytest
+    # via pytest
 pluggy==1.6.0
     # via pytest
 psycopg[binary]==3.3.9
@@ -43,7 +43,7 @@ pytest==9.2.0
     #   pytest-django
 pytest-django==4.14.0
     # via -r requirements-dev.in
-python-dateutil==2.9.0.post0
+python-dateutil==4.0.0
     # via icalendar
 qrcode==8.2
     # via -r requirements.in
@@ -51,12 +51,14 @@ ruff==0.17.5
     # via -r requirements-dev.in
 sentry-sdk==2.75.0
     # via -r requirements.in
-six==1.17.0
-    # via python-dateutil
 sqlparse==0.6.0
     # via django
 tzdata==2026.2
-    # via icalendar
+    # via
+    #   django
+    #   icalendar
+    #   psycopg
+    #   python-dateutil
 urllib3==2.8.0
     # via sentry-sdk
 whitenoise==6.12.0
