@@ -31,7 +31,13 @@ if [ -r /run/ical/.env ]; then
 fi
 
 echo "[1/4] pip install"
-"$VENV/bin/pip" install --quiet --no-input -r requirements.txt
+# requirements.txt is a hash-pinned lock (uv pip compile from requirements.in),
+# the exact set CI tested. A plain `pip install -r` of version ranges never
+# upgraded what was already installed, so prod silently missed patch/security
+# releases. --require-hashes refuses anything not in the lock, --no-deps refuses
+# to resolve anything missing from it, and pip check fails on an incoherent set.
+"$VENV/bin/pip" install --quiet --no-input --require-hashes --no-deps -r requirements.txt
+"$VENV/bin/pip" check
 
 echo "[2/4] migrate"
 "$VENV/bin/python" manage.py migrate --noinput
