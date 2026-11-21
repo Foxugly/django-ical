@@ -12,7 +12,12 @@ Stack: Django 4.2, `icalendar` 4.0.6, `django-widget-tweaks`, SQLite, Bootstrap 
 
 Activate venv first (Windows bash): `source .venv/Scripts/activate`
 
-- Install deps: `pip install -r requirements.txt`
+- Install deps (two steps — `requirements.txt` is hash-pinned, and one hashed line puts a whole pip run in hash-checking mode):
+  `pip install --require-hashes -r requirements.txt` then `pip install -r requirements-dev.txt`
+- Change a dependency: edit `requirements.in` (runtime ranges) or `requirements-dev.in`, then regenerate the locks (`--universal`: Linux prod + Windows dev, Python 3.12+):
+  `uv pip compile requirements.in --generate-hashes --universal --python-version 3.12 -o requirements.txt`
+  and `uv pip compile requirements-dev.in --universal --python-version 3.12 -o requirements-dev.txt`.
+  The deploy installs exactly the lock (`--require-hashes --no-deps` + `pip check`).
 - Run dev server: `python manage.py runserver`
 - Apply migrations: `python manage.py migrate`
 - Make migrations after model changes: `python manage.py makemigrations mycalendar`
