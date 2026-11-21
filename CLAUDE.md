@@ -14,9 +14,9 @@ Activate venv first (Windows bash): `source .venv/Scripts/activate`
 
 - Install deps (two steps — `requirements.txt` is hash-pinned, and one hashed line puts a whole pip run in hash-checking mode):
   `pip install --require-hashes -r requirements.txt` then `pip install -r requirements-dev.txt`
-- Change a dependency: edit `requirements.in` (runtime ranges) or `requirements-dev.in`, then regenerate the locks for prod (Linux, Python 3.12):
-  `uv pip compile requirements.in --generate-hashes --python-version 3.12 --python-platform x86_64-unknown-linux-gnu -o requirements.txt`
-  and `uv pip compile requirements-dev.in --python-version 3.12 --python-platform x86_64-unknown-linux-gnu -o requirements-dev.txt`.
+- Change a dependency: edit `requirements.in` (runtime ranges) or `requirements-dev.in`, then regenerate the locks (`--universal`: Linux prod + Windows dev, Python 3.12+):
+  `uv pip compile requirements.in --generate-hashes --universal --python-version 3.12 -o requirements.txt`
+  and `uv pip compile requirements-dev.in --universal --python-version 3.12 -o requirements-dev.txt`.
   The deploy installs exactly the lock (`--require-hashes --no-deps` + `pip check`).
 - Run dev server: `python manage.py runserver`
 - Apply migrations: `python manage.py migrate`
