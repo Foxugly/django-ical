@@ -11,20 +11,40 @@ from django_myical.health import health
 from mycalendar.views import home
 
 
-def set_lang(request):
-    if "lang" not in request.GET or not check_for_language(request.GET["lang"]):
-        return HttpResponseRedirect(reverse("home"))
-    user_language = request.GET["lang"]
-    translation.activate(user_language)
-    next_url = request.GET.get("next")
-    # Only same-site targets: an external `next` would turn /lang/ into an open redirect.
-    if not next_url or not url_has_allowed_host_and_scheme(
-        next_url,
+def _safe_next_url(request):
+    """`next` only when it points back to this site, else the home page.
+
+    An external `next` would turn /lang/ into an open redirect. Positive guard
+    (return inside the `if`) so CodeQL sees the sanitizer (py/url-redirection).
+    """
+    candidate = request.GET.get("next")
+    if candidate and url_has_allowed_host_and_scheme(
+        candidate,
         allowed_hosts={request.get_host()},
         require_https=request.is_secure(),
     ):
-        next_url = reverse("home")
-    response = HttpResponseRedirect(next_url)
+        return candidate
+    return reverse("home")
+
+
+def _supported_language(code):
+    """The settings.LANGUAGES code equal to `code`, or None.
+
+    The cookie gets the value from settings, never the raw query string
+    (py/cookie-injection); check_for_language also needs the locale installed.
+    """
+    for lang_code, _name in settings.LANGUAGES:
+        if code == lang_code and check_for_language(lang_code):
+            return lang_code
+    return None
+
+
+def set_lang(request):
+    user_language = _supported_language(request.GET.get("lang"))
+    if user_language is None:
+        return HttpResponseRedirect(reverse("home"))
+    translation.activate(user_language)
+    response = HttpResponseRedirect(_safe_next_url(request))
     response.set_cookie(
         settings.LANGUAGE_COOKIE_NAME,
         user_language,
