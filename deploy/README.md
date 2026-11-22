@@ -28,13 +28,13 @@ curl -i https://ical.foxugly.com/
 
 ## Update
 
-```bash
-cd /var/www/django_websites/django-ical
-sudo -u django git pull
-sudo bash deploy/install.sh   # idempotent: re-pip, re-migrate, re-collectstatic, restart
-```
+Automatic: every push to `main` runs `.github/workflows/ci.yml` (tests, pip-audit, then OIDC -> SSM).
+Root installs units / nginx from its own bare mirror `/var/lib/fleet-deploy/django-ical.git` at the
+pushed SHA, then `deploy/ssm-deploy.sh` runs as `django` (pip from the hash lock, migrate,
+collectstatic, restart `ical-gunicorn`). **Never `git pull` or run `install.sh` on the box for an
+update** (OPERATIONS.md section 3.11). `install.sh` is the original bring-up only.
 
-## Import prod data (one-time)
+## Import prod data (one-time, done)
 
 The historical prod data (db.sqlite3 + media/) is filtered locally to remove webshell uploads, packaged into a tarball, then imported on the server.
 
@@ -54,4 +54,4 @@ sudo bash /var/www/django_websites/django-ical/deploy/import-data.sh /tmp/import
 
 DNS-level: revert the A record `ical.foxugly.com` to the old server IP. Effective in ≤ TTL minutes.
 
-DB-level: `import-data.sh` saves the previous `db.sqlite3` as `db.sqlite3.before-import-YYYYMMDD-HHMMSS` before overwriting. Restore with `mv` + `systemctl restart ical-gunicorn`.
+DB-level: prod is PostgreSQL now (weekly fleet backup to S3, OPERATIONS.md section 3.23). Historical: `import-data.sh` saved the previous `db.sqlite3` as `db.sqlite3.before-import-YYYYMMDD-HHMMSS` before overwriting. Restore with `mv` + `systemctl restart ical-gunicorn`.

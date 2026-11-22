@@ -1,5 +1,7 @@
 # Django-iCal — Full Tech & Security Upgrade — Implementation Plan
 
+> **Historical plan (executed).** The upgrade is done and since superseded (Django 6.1, PostgreSQL, SSM secrets, auto-deploy, admin 2FA). Current reference: `CLAUDE.md` and `deploy/README.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Modernize the django-ical project (Django 4.2 → 5.2 LTS, Python 3.12+, `icalendar` 6.x, `zoneinfo`), fix latent bugs (CSV parsing, encoding, swallowed exceptions, missing settings), secure file uploads, and deploy hardened settings on AWS EC2 at `ical.foxugly.com` while preserving existing prod data.
