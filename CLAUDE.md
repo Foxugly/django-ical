@@ -8,7 +8,7 @@ Single-purpose Django web app (**ical.foxugly.com**) that converts an uploaded s
 of events into a downloadable `.ics` (iCalendar) file, then exposes share links (Facebook, Twitter,
 WhatsApp, mail, copy URL).
 
-Stack: Python 3.12+, **Django 6.1**, `icalendar` 7, `django-widget-tweaks`, `django-environ`,
+Stack: Python 3.14 (deadsnakes `/usr/bin/python3.14` on the box; system `python3` stays 3.12), **Django 6.1**, `icalendar` 7, `django-widget-tweaks`, `django-environ`,
 WhiteNoise, gunicorn, `psycopg`, `sentry-sdk`, django-otp (admin 2FA). Bootstrap 5.3 + FontAwesome 5
 via jsDelivr (SRI). PostgreSQL in prod, SQLite in dev. Virtualenv in `.venv/`.
 
@@ -18,9 +18,9 @@ Activate venv first (Windows bash): `source .venv/Scripts/activate`
 
 - Install deps (two steps — `requirements.txt` is hash-pinned, and one hashed line puts a whole pip run in hash-checking mode):
   `pip install --require-hashes -r requirements.txt` then `pip install -r requirements-dev.txt`
-- Change a dependency: edit `requirements.in` (runtime ranges) or `requirements-dev.in`, then regenerate the locks (`--universal`: Linux prod + Windows dev, Python 3.12+):
-  `uv pip compile requirements.in --generate-hashes --universal --python-version 3.12 -o requirements.txt`
-  and `uv pip compile requirements-dev.in --universal --python-version 3.12 -o requirements-dev.txt`.
+- Change a dependency: edit `requirements.in` (runtime ranges) or `requirements-dev.in`, then regenerate the locks (`--universal`: Linux prod + Windows dev, Python 3.14):
+  `uv pip compile requirements.in --generate-hashes --universal --python-version 3.14 -o requirements.txt`
+  and `uv pip compile requirements-dev.in --universal --python-version 3.14 -o requirements-dev.txt`.
   The deploy installs exactly the lock (`--require-hashes --no-deps` + `pip check`).
 - Lint: `ruff check .` (config `ruff.toml`; CI gate)
 - Tests: `pytest` (pytest-django; tests in `mycalendar/tests/`; `conftest.py` sets dev env defaults).
@@ -51,8 +51,9 @@ Activate venv first (Windows bash): `source .venv/Scripts/activate`
 ## Deploy
 
 Push to `main` → `.github/workflows/ci.yml` (test, pip-audit, then OIDC → SSM deploy). The root steps
-install units / nginx from root's bare mirror, then `deploy/ssm-deploy.sh` runs as `django` (pip from
-the lock, migrate, collectstatic, restart `ical-gunicorn`). Never `git pull` on the box.
+install units / nginx from root's bare mirror, then `deploy/ssm-deploy.sh` runs as `django` (venv rebuilt **in place** with
+`/usr/bin/python3.14` if it is on another Python — old one kept as `.venv.prev`, restored on
+failure — then pip from the lock, migrate, collectstatic, restart `ical-gunicorn`). Never `git pull` on the box.
 Units: `ical-env-fetch` (SSM `/ical/prod` → `/run/ical/.env`) + `ical-gunicorn` (`127.0.0.1:8002`).
 Sentry project: `ical-backend-frontend`.
 

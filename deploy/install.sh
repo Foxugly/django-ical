@@ -13,7 +13,9 @@ set -euo pipefail
 INSTALL_DIR=/var/www/django_websites/django-ical
 RUN_USER=django
 RUN_GROUP=www-data
-PYTHON=python3.12
+# deadsnakes python3.14 (Ubuntu 24.04's system python3 is 3.12); absolute path so
+# the venv never picks up another interpreter from PATH.
+PYTHON=/usr/bin/python3.14
 DOMAIN=ical.foxugly.com
 
 if [ ! -d "$INSTALL_DIR" ]; then
@@ -35,9 +37,13 @@ if ! id -u "$RUN_USER" >/dev/null 2>&1; then
 fi
 
 echo "==> Installing OS packages"
+if [ ! -x "$PYTHON" ]; then
+    DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common
+    add-apt-repository -y ppa:deadsnakes/ppa
+fi
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    "$PYTHON" "${PYTHON}-venv" \
+    python3.14 python3.14-venv \
     nginx certbot python3-certbot-nginx
 
 echo "==> Setting ownership on $INSTALL_DIR"
