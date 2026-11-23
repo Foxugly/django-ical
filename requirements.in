@@ -4,7 +4,7 @@ django-widget-tweaks>=1.6.0
 django-environ>=0.14.0
 whitenoise>=6.6
 gunicorn>=27.0.1
-sentry-sdk>=2.75.0
+sentry-sdk>=2.76.0
 psycopg[binary]>=3.3.9,<4
 django-otp==1.7.5
 qrcode==8.2

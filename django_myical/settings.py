@@ -231,7 +231,10 @@ if SENTRY_DSN and _SENTRY_ENV_IS_PROD:
     from django.core.exceptions import DisallowedHost
     from sentry_sdk.integrations.django import DjangoIntegration
 
+    from django_myical.sentry import DATA_COLLECTION, scrub_event
+
     def _drop_benign_noise(event, hint):
+        scrub_event(event, hint)
         # Internet scanners hit the raw EC2 IP; ical is nginx's implicit default vhost,
         # so Django rejects them as DisallowedHost (400). That rejection is the correct,
         # intended behaviour — not an error worth paging on. Drop it instead of letting
@@ -247,6 +250,8 @@ if SENTRY_DSN and _SENTRY_ENV_IS_PROD:
         integrations=[DjangoIntegration()],
         environment=SENTRY_ENVIRONMENT,
         traces_sample_rate=0.1,
-        send_default_pii=False,
+        # No PII, cookies or request bodies: see django_myical/sentry.py.
+        data_collection=DATA_COLLECTION,
         before_send=_drop_benign_noise,
+        before_send_transaction=scrub_event,
     )
