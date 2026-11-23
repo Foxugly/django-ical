@@ -228,32 +228,14 @@ SENTRY_ENVIRONMENT = env("SENTRY_ENVIRONMENT", default="") or STATE
 _SENTRY_ENV_IS_PROD = SENTRY_ENVIRONMENT.strip().upper() in {"PROD", "PRODUCTION"}
 if SENTRY_DSN and _SENTRY_ENV_IS_PROD:
     import sentry_sdk
-    from django.core.exceptions import DisallowedHost
-    from sentry_sdk.integrations.django import DjangoIntegration
 
-    # Underscored: module-level upper-case names would become Django settings.
-    from django_myical.sentry import DATA_COLLECTION as _SENTRY_DATA_COLLECTION
-    from django_myical.sentry import scrub_event as _sentry_scrub_event
-
-    def _drop_benign_noise(event, hint):
-        _sentry_scrub_event(event, hint)
-        # Internet scanners hit the raw EC2 IP; ical is nginx's implicit default vhost,
-        # so Django rejects them as DisallowedHost (400). That rejection is the correct,
-        # intended behaviour — not an error worth paging on. Drop it instead of letting
-        # bot traffic flood Sentry (~500/day). Do NOT "fix" this by adding the IP to
-        # ALLOWED_HOSTS — that would make Django serve Host-spoofed requests.
-        exc = hint.get("exc_info")
-        if exc and isinstance(exc[1], DisallowedHost):
-            return None
-        return event
+    # Integrations, data_collection and the scrubbing callbacks (no PII, cookies
+    # or request bodies; DisallowedHost noise dropped): see django_myical/sentry.py.
+    from django_myical.sentry import sentry_options as _sentry_options
 
     sentry_sdk.init(
         dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration()],
         environment=SENTRY_ENVIRONMENT,
         traces_sample_rate=0.1,
-        # No PII, cookies or request bodies: see django_myical/sentry.py.
-        data_collection=_SENTRY_DATA_COLLECTION,
-        before_send=_drop_benign_noise,
-        before_send_transaction=_sentry_scrub_event,
+        **_sentry_options(),
     )
